@@ -1,208 +1,136 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 订单号
+ * 订单表
  */
+@Data
 @Entity
-@Table(name = "order")
-@DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
+@DynamicInsert
+@Table(name = "order")
 public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    // 订单号
-    @Column(name = "logistics_num")
-    private String logisticsNum;
-    // 快递
-    private String logistics;
-    // 采样图片id
-    @Column(name = "sample_ids")
-    private String sampleIds;
-    // 购买人id
-    @Column(name = "buyer_id")
-    private Integer buyerId;
-    // 已付款
-    private double payed;
-    // 应付款
-    private double payable;
-    // 付款方式
-    @Column(name = "pay_type")
-    private String payType;
-    //
-    @Column(name = "update_time")
-    private long updateTime;
 
-    @Column(name = "create_time")
-    private long createTime;
-    // 订单状态，1待付款，2待寄送，3运输中，4检测中，5已完成，0已取消
-    private String status;
-    // 实验室id
-    @Column(name = "laboratory_id")
-    private Integer laboratoryId;
-    // instruction
-    private String instruction;
-    // 付款时间
-    @Column(name = "pay_time")
-    private long payTime;
-    // 报告
-    private String report;
-    // 订单编号
-    @Column(name = "order_sn")
-    private String orderSn;
+	/**
+	 * 订单号
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * 运单号
+	 * default value: null
+	 */
+	@Column(name = "logistics_num", nullable = true)
+	private String logisticsNum;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * 快递
+	 * default value: null
+	 */
+	@Column(name = "logistics", nullable = true)
+	private String logistics;
 
-    public String getLogisticsNum() {
-        return logisticsNum;
-    }
+	/**
+	 * 采样图片id
+	 * default value: null
+	 */
+	@Column(name = "sample_ids", nullable = false)
+	private String sampleIds;
 
-    public void setLogisticsNum(String logisticsNum) {
-        this.logisticsNum = logisticsNum;
-    }
+	/**
+	 * 购买人id
+	 * default value: null
+	 */
+	@Column(name = "buyer_id", nullable = false)
+	private Integer buyerId;
 
-    public String getLogistics() {
-        return logistics;
-    }
+	/**
+	 * 已付款
+	 * default value: 0.00
+	 */
+	@Column(name = "payed", nullable = false)
+	private Double payed;
 
-    public void setLogistics(String logistics) {
-        this.logistics = logistics;
-    }
+	/**
+	 * 应付款
+	 * default value: 0.00
+	 */
+	@Column(name = "payable", nullable = false)
+	private Double payable;
 
-    public String getSampleIds() {
-        return sampleIds;
-    }
+	/**
+	 * 付款方式
+	 * default value: null
+	 */
+	@Column(name = "pay_type", nullable = true)
+	private String payType;
 
-    public void setSampleIds(String sampleIds) {
-        this.sampleIds = sampleIds;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "update_time", nullable = true)
+	private Long updateTime;
 
-    public Integer getBuyerId() {
-        return buyerId;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "create_time", nullable = true)
+	private Long createTime;
 
-    public void setBuyerId(Integer buyerId) {
-        this.buyerId = buyerId;
-    }
+	/**
+	 * 订单状态，1待付款，2待寄送，3运输中，4检测中，5已完成，0已取消
+	 * default value: '1'
+	 */
+	@Column(name = "status", nullable = false)
+	private String status;
 
-    public double getPayed() {
-        return payed;
-    }
+	/**
+	 * 实验室id
+	 * default value: null
+	 */
+	@Column(name = "laboratory_id", nullable = true)
+	private Integer laboratoryId;
 
-    public void setPayed(double payed) {
-        this.payed = payed;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "instruction", nullable = true)
+	private String instruction;
 
-    public double getPayable() {
-        return payable;
-    }
+	/**
+	 * 付款时间
+	 * default value: null
+	 */
+	@Column(name = "pay_time", nullable = true)
+	private Long payTime;
 
-    public void setPayable(double payable) {
-        this.payable = payable;
-    }
+	/**
+	 * 报告
+	 * default value: null
+	 */
+	@Column(name = "report", nullable = true)
+	private String report;
 
-    public String getPayType() {
-        return payType;
-    }
-
-    public void setPayType(String payType) {
-        this.payType = payType;
-    }
-
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Integer getLaboratoryId() {
-        return laboratoryId;
-    }
-
-    public void setLaboratoryId(Integer laboratoryId) {
-        this.laboratoryId = laboratoryId;
-    }
-
-    public String getInstruction() {
-        return instruction;
-    }
-
-    public void setInstruction(String instruction) {
-        this.instruction = instruction;
-    }
-
-    public long getPayTime() {
-        return payTime;
-    }
-
-    public void setPayTime(long payTime) {
-        this.payTime = payTime;
-    }
-
-    public String getReport() {
-        return report;
-    }
-
-    public void setReport(String report) {
-        this.report = report;
-    }
-
-    public String getOrderSn() {
-        return orderSn;
-    }
-
-    public void setOrderSn(String orderSn) {
-        this.orderSn = orderSn;
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", logisticsNum='" + logisticsNum + '\'' +
-                ", logistics='" + logistics + '\'' +
-                ", sampleIds='" + sampleIds + '\'' +
-                ", buyerId=" + buyerId +
-                ", payed=" + payed +
-                ", payable=" + payable +
-                ", payType='" + payType + '\'' +
-                ", updateTime=" + updateTime +
-                ", createTime=" + createTime +
-                ", status='" + status + '\'' +
-                ", laboratoryId=" + laboratoryId +
-                ", instruction='" + instruction + '\'' +
-                ", payTime=" + payTime +
-                ", report='" + report + '\'' +
-                ", orderSn='" + orderSn + '\'' +
-                '}';
-    }
+	/**
+	 * 订单编号
+	 * default value: null
+	 */
+	@Column(name = "order_sn", nullable = true)
+	private String orderSn;
 }

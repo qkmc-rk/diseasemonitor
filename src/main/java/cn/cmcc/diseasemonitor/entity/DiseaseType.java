@@ -1,54 +1,45 @@
 package cn.cmcc.diseasemonitor.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 疾病类型
+ * 疾病类型表
  */
+@Data
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
+@DynamicInsert
 @Table(name = "disease_type")
 public class DiseaseType {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    // 疾病名称
-    private String name;
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "name", nullable = true)
+	private String name;
 
-    // 状态  0 不可见, 1可见
-    private String status;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "DiseaseType{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", status='" + status + '\'' +
-                '}';
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "status", nullable = true)
+	private String status;
 }

@@ -1,116 +1,80 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 疫苗种类？？？
+ * 疫苗记录
  */
+@Data
 @Entity
-@Table(name = "vacc_record")
-@DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
+@DynamicInsert
+@Table(name = "vacc_record")
 public class VaccRecord {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    // 日龄
-    private String age;
-    // 疫苗种类
-    @Column(name = "vacc_type")
-    private String vaccType;
-    // 厂商
-    private String manufacturer;
-    // 关联订单
-    @Column(name = "order_id")
-    private Integer orderId;
-    // 1正常
-    private boolean status;
-    //
-    @Column(name = "create_time")
-    private long createTime;
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    @Column(name = "update_time")
-    private long updateTime;
+	/**
+	 * 日龄
+	 * default value: null
+	 */
+	@Column(name = "age", nullable = true)
+	private String age;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * 疫苗种类
+	 * default value: null
+	 */
+	@Column(name = "vacc_type", nullable = true)
+	private String vaccType;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * 厂商
+	 * default value: null
+	 */
+	@Column(name = "manufacturer", nullable = true)
+	private String manufacturer;
 
-    public String getAge() {
-        return age;
-    }
+	/**
+	 * 关联订单
+	 * default value: null
+	 */
+	@Column(name = "order_id", nullable = true)
+	private Integer orderId;
 
-    public void setAge(String age) {
-        this.age = age;
-    }
+	/**
+	 * 1正常
+	 * default value: 1
+	 */
+	@Column(name = "status", nullable = true)
+	private Integer status;
 
-    public String getVaccType() {
-        return vaccType;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "create_time", nullable = true)
+	private Long createTime;
 
-    public void setVaccType(String vaccType) {
-        this.vaccType = vaccType;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    @Override
-    public String toString() {
-        return "VaccRecord{" +
-                "id=" + id +
-                ", age='" + age + '\'' +
-                ", vaccType='" + vaccType + '\'' +
-                ", manufacturer='" + manufacturer + '\'' +
-                ", orderId=" + orderId +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                '}';
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "update_time", nullable = true)
+	private Long updateTime;
 }

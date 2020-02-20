@@ -1,67 +1,52 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 订单记录，这是干嘛的
+ * 订单记录
  */
+@Data
 @Entity
-@Table(name = "order_record")
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @DynamicInsert
+@Table(name = "order_record")
 public class OrderRecord {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    // 操作时间
-    private long time;
-    // 操作类型，0创建，1付款，2寄出样品，4确认收样，5订单完成
-    private String type;
-    @Column(name = "order_id")
-    private Integer orderId;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * 操作时间
+	 * default value: null
+	 */
+	@Column(name = "time", nullable = false)
+	private Long time;
 
-    public long getTime() {
-        return time;
-    }
+	/**
+	 * 操作类型，0创建，1付款，2寄出样品，4确认收样，5订单完成
+	 * default value: null
+	 */
+	@Column(name = "type", nullable = false)
+	private String type;
 
-    public void setTime(long time) {
-        this.time = time;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderRecord{" +
-                "id=" + id +
-                ", time=" + time +
-                ", type='" + type + '\'' +
-                ", orderId=" + orderId +
-                '}';
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "order_id", nullable = false)
+	private Integer orderId;
 }

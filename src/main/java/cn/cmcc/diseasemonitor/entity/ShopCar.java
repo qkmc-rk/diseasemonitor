@@ -1,103 +1,73 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 购物车
  */
+@Data
 @Entity
-@Table(name = "shop_car")
-@DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
+@DynamicInsert
+@Table(name = "shop_car")
 public class ShopCar {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    // 购物者id
-    @Column(name = "user_id")
-    private Integer userId;
-    // 仓库Id
-    @Column(name = "repertory_id")
-    private Integer repertoryId;
-    // 数量
-    private Integer num;
-    //
-    @Column(name = "create_time")
-    private long createTime;
-    @Column(name = "update_time")
-    private long updateTime;
-    // 状态 0取消，1正常，2下单
-    private String status;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "user_id", nullable = true)
+	private Integer userId;
 
-    public Integer getUserId() {
-        return userId;
-    }
+	/**
+	 * 库存id
+	 * default value: null
+	 */
+	@Column(name = "repertory_id", nullable = true)
+	private Integer repertoryId;
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "num", nullable = true)
+	private Integer num;
 
-    public Integer getRepertoryId() {
-        return repertoryId;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "create_time", nullable = true)
+	private Long createTime;
 
-    public void setRepertoryId(Integer repertoryId) {
-        this.repertoryId = repertoryId;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "update_time", nullable = true)
+	private Long updateTime;
 
-    public Integer getNum() {
-        return num;
-    }
-
-    public void setNum(Integer num) {
-        this.num = num;
-    }
-
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "ShopCar{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", repertoryId=" + repertoryId +
-                ", num=" + num +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", status='" + status + '\'' +
-                '}';
-    }
+	/**
+	 * 0取消，1正常，2下单
+	 * default value: '1'
+	 */
+	@Column(name = "status", nullable = false)
+	private String status;
 }

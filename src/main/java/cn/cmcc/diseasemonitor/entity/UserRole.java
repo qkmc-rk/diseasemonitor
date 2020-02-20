@@ -1,56 +1,45 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 用户有什么角色
+ * 用户角色
  */
+@Data
 @Entity
-@Table(name = "user_role")
-@DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
+@DynamicInsert
+@Table(name = "user_role")
 public class UserRole {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    @Column(name = "user_id")
-    private Integer userId;
-    @Column(name = "role_id")
-    private Integer roleId;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "user_id", nullable = false)
+	private Integer userId;
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
-    }
-
-    @Override
-    public String toString() {
-        return "UserRole{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", roleId=" + roleId +
-                '}';
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "role_id", nullable = false)
+	private Integer roleId;
 }

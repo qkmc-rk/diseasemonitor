@@ -1,77 +1,59 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 报告 检测报告吧？
+ * 检测报告
  */
+@Data
 @Entity
-@Table(name = "report")
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @DynamicInsert
+@Table(name = "report")
 public class Report {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    private String url;
-    @Column(name = "create_time")
-    private long createTime;
-    @Column(name = "update_time")
-    private long updateTime;
-    @Column(name = "upload_user")
-    private Integer uploadUser;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "url", nullable = true)
+	private String url;
 
-    public String getUrl() {
-        return url;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "create_time", nullable = true)
+	private Long createTime;
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "update_time", nullable = true)
+	private Long updateTime;
 
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getUploadUser() {
-        return uploadUser;
-    }
-
-    public void setUploadUser(Integer uploadUser) {
-        this.uploadUser = uploadUser;
-    }
-
-    @Override
-    public String toString() {
-        return "Report{" +
-                "id=" + id +
-                ", url='" + url + '\'' +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", uploadUser=" + uploadUser +
-                '}';
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "upload_user", nullable = true)
+	private Integer uploadUser;
 }

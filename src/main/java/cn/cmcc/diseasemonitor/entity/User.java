@@ -1,77 +1,59 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 用户信息
+ * 用户
  */
+@Data
 @Entity
-@Table(name = "user")
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @DynamicInsert
+@Table(name = "user")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    @Column(name = "user_name")
-    private String userName;
-    private String passwd;
-    @Column(name = "create_time")
-    private long createTime;
 
-    private String status;
+	/**
+	 * 主键
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * 用户名
+	 * default value: null
+	 */
+	@Column(name = "user_name", nullable = false)
+	private String userName;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * 密码
+	 * default value: null
+	 */
+	@Column(name = "passwd", nullable = false)
+	private String passwd;
 
-    public String getUserName() {
-        return userName;
-    }
+	/**
+	 * 创建时间
+	 * default value: null
+	 */
+	@Column(name = "create_time", nullable = false)
+	private Long createTime;
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPasswd() {
-        return passwd;
-    }
-
-    public void setPasswd(String passwd) {
-        this.passwd = passwd;
-    }
-
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", passwd='" + passwd + '\'' +
-                ", createTime=" + createTime +
-                ", status='" + status + '\'' +
-                '}';
-    }
+	/**
+	 * 是否有效 1：有效  0：锁定
+	 * default value: null
+	 */
+	@Column(name = "status", nullable = false)
+	private String status;
 }
