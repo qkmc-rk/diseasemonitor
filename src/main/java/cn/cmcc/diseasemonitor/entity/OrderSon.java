@@ -1,5 +1,8 @@
 package cn.cmcc.diseasemonitor.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 /**
@@ -8,6 +11,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "order_son")
+@DynamicInsert
+@DynamicUpdate
 public class OrderSon {
 
     @Id
