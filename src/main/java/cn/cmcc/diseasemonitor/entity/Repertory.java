@@ -1,159 +1,108 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 仓库，commodity有多少都存在仓库里面，这个仓库还
+ * 商品仓库
  */
+@Data
 @Entity
-@Table(name = "repertory")
-@DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
+@DynamicInsert
+@Table(name = "repertory")
 public class Repertory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    // 实验室id
-    @Column(name = "laboratory_id")
-    private Integer laboratoryId;
-    // 商品名
-    @Column(name = "disease_id")
-    private Integer diseaseId;
-    //
-    @Column(name = "commodity_id")
-    private Integer commodityId;
-    // 价格
-    private double price;
-    //
-    private Integer inventory;
-    @Column(name = "create_time")
-    private long createTime;
-    @Column(name = "update_time")
-    private long updateTime;
-    // 创建人
-    @Column(name = "user_id")
-    private Integer userId;
-    // ‘1’上架，‘0’下架
-    private String status;
 
-    private Integer logo;
-    // 标签
-    private String tag;
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * 实验室id
+	 * default value: null
+	 */
+	@Column(name = "laboratory_id", nullable = true)
+	private Integer laboratoryId;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * 商品名
+	 * default value: null
+	 */
+	@Column(name = "disease_id", nullable = true)
+	private Integer diseaseId;
 
-    public Integer getLaboratoryId() {
-        return laboratoryId;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "commodity_id", nullable = true)
+	private Integer commodityId;
 
-    public void setLaboratoryId(Integer laboratoryId) {
-        this.laboratoryId = laboratoryId;
-    }
+	/**
+	 * 价格
+	 * default value: null
+	 */
+	@Column(name = "price", nullable = true)
+	private Double price;
 
-    public Integer getDiseaseId() {
-        return diseaseId;
-    }
+	/**
+	 * 存货
+	 * default value: null
+	 */
+	@Column(name = "inventory", nullable = true)
+	private Integer inventory;
 
-    public void setDiseaseId(Integer diseaseId) {
-        this.diseaseId = diseaseId;
-    }
+	/**
+	 * 创建时间
+	 * default value: null
+	 */
+	@Column(name = "create_time", nullable = true)
+	private Long createTime;
 
-    public Integer getCommodityId() {
-        return commodityId;
-    }
+	/**
+	 * 修改时间
+	 * default value: null
+	 */
+	@Column(name = "update_time", nullable = true)
+	private Long updateTime;
 
-    public void setCommodityId(Integer commodityId) {
-        this.commodityId = commodityId;
-    }
+	/**
+	 * 创建人
+	 * default value: null
+	 */
+	@Column(name = "user_id", nullable = true)
+	private Integer userId;
 
-    public double getPrice() {
-        return price;
-    }
+	/**
+	 * ‘1’上架，‘0’下架
+	 * default value: null
+	 */
+	@Column(name = "status", nullable = false)
+	private String status;
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "logo", nullable = true)
+	private Integer logo;
 
-    public Integer getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(Integer inventory) {
-        this.inventory = inventory;
-    }
-
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Integer getLogo() {
-        return logo;
-    }
-
-    public void setLogo(Integer logo) {
-        this.logo = logo;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    @Override
-    public String toString() {
-        return "Repertory{" +
-                "id=" + id +
-                ", laboratoryId=" + laboratoryId +
-                ", diseaseId=" + diseaseId +
-                ", commodityId=" + commodityId +
-                ", price=" + price +
-                ", inventory=" + inventory +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", userId=" + userId +
-                ", status='" + status + '\'' +
-                ", logo=" + logo +
-                ", tag='" + tag + '\'' +
-                '}';
-    }
+	/**
+	 * 标签
+	 * default value: null
+	 */
+	@Column(name = "tag", nullable = true)
+	private String tag;
 }

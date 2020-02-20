@@ -1,66 +1,52 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+/**
+ * 权限表
+ */
+@Data
 @Entity
-@Table(name = "permission")
-@DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
+@DynamicInsert
+@Table(name = "permission")
 public class Permission {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    // url地址
-    private String url;
-    // 权限
-    private String permission;
-    // 权限名
-    private String name;
+	/**
+	 * url地址
+	 * default value: null
+	 */
+	@Column(name = "url", nullable = false)
+	private String url;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * 权限
+	 * default value: null
+	 */
+	@Column(name = "permission", nullable = false)
+	private String permission;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getPermission() {
-        return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Permission{" +
-                "id=" + id +
-                ", url='" + url + '\'' +
-                ", permission='" + permission + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
+	/**
+	 * 权限名
+	 * default value: null
+	 */
+	@Column(name = "name", nullable = true)
+	private String name;
 }

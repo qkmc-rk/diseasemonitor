@@ -1,90 +1,66 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 图片存储，存储图片的地址等信息
+ * 图片
  */
+@Data
 @Entity
-@Table(name = "pic")
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @DynamicInsert
+@Table(name = "pic")
 public class Pic {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
 
-    private String url;
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    @Column(name = "create_time")
-    private long createTime;
-    @Column(name = "update_time")
-    private long updateTime;
-    @Column(name = "upload_user")
-    private Integer uploadUser;
-    @Column(name = "upload_user_type")
-    private String uploadUserType;
+	/**
+	 * 图片地址
+	 * default value: null
+	 */
+	@Column(name = "url", nullable = true)
+	private String url;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * 创建时间
+	 * default value: null
+	 */
+	@Column(name = "create_time", nullable = true)
+	private Long createTime;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * 修改时间
+	 * default value: null
+	 */
+	@Column(name = "update_time", nullable = true)
+	private Long updateTime;
 
-    public String getUrl() {
-        return url;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "upload_user", nullable = true)
+	private Integer uploadUser;
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getUploadUser() {
-        return uploadUser;
-    }
-
-    public void setUploadUser(Integer uploadUser) {
-        this.uploadUser = uploadUser;
-    }
-
-    public String getUploadUserType() {
-        return uploadUserType;
-    }
-
-    public void setUploadUserType(String uploadUserType) {
-        this.uploadUserType = uploadUserType;
-    }
-
-    @Override
-    public String toString() {
-        return "Pic{" +
-                "id=" + id +
-                ", url='" + url + '\'' +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", uploadUser=" + uploadUser +
-                ", uploadUserType='" + uploadUserType + '\'' +
-                '}';
-    }
+	/**
+	 * ‘0’为mobile端，‘1’为web端
+	 * default value: null
+	 */
+	@Column(name = "upload_user_type", nullable = true)
+	private String uploadUserType;
 }

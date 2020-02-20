@@ -1,57 +1,45 @@
 package cn.cmcc.diseasemonitor.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 角色有什么权限
+ * 角色权限
  */
+@Data
 @Entity
-@Table(name = "role_permission")
-@DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
+@DynamicInsert
+@Table(name = "role_permission")
 public class RolePermission {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
 
-    @Column(name = "role_id")
-    private Integer roleId;
-    @Column(name = "permission_id")
-    private Integer permissionId;
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "role_id", nullable = false)
+	private Integer roleId;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
-    }
-
-    public Integer getPermissionId() {
-        return permissionId;
-    }
-
-    public void setPermissionId(Integer permissionId) {
-        this.permissionId = permissionId;
-    }
-
-    @Override
-    public String toString() {
-        return "RolePermission{" +
-                "id=" + id +
-                ", roleId=" + roleId +
-                ", permissionId=" + permissionId +
-                '}';
-    }
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Column(name = "permission_id", nullable = false)
+	private Integer permissionId;
 }

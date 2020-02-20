@@ -1,97 +1,73 @@
 package cn.cmcc.diseasemonitor.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 微信小程序用户的地址
  */
+@Data
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
+@DynamicInsert
 @Table(name = "mobile_address")
 public class MobileAddress {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    // 收件人姓名
-    private String name;
-    // 手机号
-    private String phone;
-    // 所在地区
-    private String location;
-    // 创建人Id
-    @Column(name = "user_id")
-    private Integer userId;
-    // 详细地址
-    private String address;
-    // '1'正常，'0'删除
-    private String status;
+	/**
+	 * null
+	 * default value: null
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+	/**
+	 * 收件人姓名
+	 * default value: null
+	 */
+	@Column(name = "name", nullable = true)
+	private String name;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * 手机号
+	 * default value: null
+	 */
+	@Column(name = "phone", nullable = true)
+	private String phone;
 
-    public String getName() {
-        return name;
-    }
+	/**
+	 * 所在地区
+	 * default value: null
+	 */
+	@Column(name = "location", nullable = true)
+	private String location;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 * 创建人
+	 * default value: null
+	 */
+	@Column(name = "user_id", nullable = true)
+	private Integer userId;
 
-    public String getPhone() {
-        return phone;
-    }
+	/**
+	 * 详细地址
+	 * default value: null
+	 */
+	@Column(name = "address", nullable = true)
+	private String address;
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "MobileAddress{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                ", location='" + location + '\'' +
-                ", userId=" + userId +
-                ", address='" + address + '\'' +
-                ", status='" + status + '\'' +
-                '}';
-    }
+	/**
+	 * '1'正常，'0'删除
+	 * default value: null
+	 */
+	@Column(name = "status", nullable = true)
+	private String status;
 }
