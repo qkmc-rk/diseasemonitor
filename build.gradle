@@ -30,6 +30,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// md5依赖
+	implementation 'org.apache.commons:commons-collections4:4.1'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
+	//低于4.3版本的httpClient报错java.lang.NoClassDefFoundError
+	implementation 'org.apache.httpcomponents:httpclient:4.3.3'
+
+	implementation 'com.qiniu:qiniu-java-sdk:7.2.11'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'
