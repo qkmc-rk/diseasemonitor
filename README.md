@@ -8,3 +8,6 @@ diseasemonitor
 - mrruan: 增加七牛云配置 util与配置文件
 
 - NadevXiang: 完成生成entity repository service
+
+# 2020 - 02 - 21
+- mrruan: 增加登录接口(未使用权限接口),使用redis存储token,过期时间15mins.
