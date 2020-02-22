@@ -1,5 +1,7 @@
 package cn.cmcc.diseasemonitor.service.impl;
 
+import cn.cmcc.diseasemonitor.entity.Laboratory;
+import cn.cmcc.diseasemonitor.repository.LaboratoryRepository;
 import cn.cmcc.diseasemonitor.util.Constant;
 import cn.cmcc.diseasemonitor.util.MD5Util;
 import cn.cmcc.diseasemonitor.util.RedisUtil;
@@ -17,6 +19,9 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository resp;
+
+    @Autowired
+    LaboratoryRepository laboratoryRepository;
 
     @Override
     public Integer login(String username, String password) {
@@ -70,11 +75,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer updateUserName(String token, String username) {
+    public Optional<Integer> updateUserName(String token, String username) {
         return this.findUserByToken(token).map((v) -> {
             v.setUserName(username);
             resp.save(v);
-            return 1;
-        }).orElse(-1);
+            return Optional.of(1);
+        }).orElse(Optional.empty());
+    }
+
+    @Override
+    public Optional<Integer> updatePassword(String token, String oldPassword, String newPassword) {
+        String oldPasswordMD5 = MD5Util.trueMd5(oldPassword);
+        String newPasswordMD5 = MD5Util.trueMd5(newPassword);
+        return this.findUserByToken(token).map((v) -> {
+            if (oldPasswordMD5.equals(v.getPasswd())) {
+                v.setPasswd(newPasswordMD5);
+                resp.save(v);
+                return Optional.of(1);
+            }
+            return Optional.of(-1);
+        }).orElse(Optional.empty());
+    }
+
+    @Override
+    public Optional<Integer> updatePhone(String token, String phone) {
+        return this.findUserByToken(token).map((v) -> {
+            return laboratoryRepository.findByUserId(v.getId()).map(
+                    (k) -> {
+                        k.setPhone(phone);
+                        laboratoryRepository.save(k);
+                        return Optional.of(1);
+                    }
+            ).orElse(Optional.empty());
+        }).orElse(Optional.empty());
     }
 }

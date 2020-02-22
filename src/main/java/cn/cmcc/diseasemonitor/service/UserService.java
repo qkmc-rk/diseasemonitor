@@ -46,8 +46,28 @@ public interface UserService {
      * 修改用户名
      *
      * @param token    :
-     * @param username :
-     * @return: java.lang.Integer
+     * @param username : 用户名
+     * @return: java.util.Optional<java.lang.Integer> 1成功 null token无效
      */
-    Integer updateUserName(String token, String username);
+    Optional<Integer> updateUserName(String token, String username);
+
+    /**
+     * 修改密码
+     *
+     * @param token       :
+     * @param oldPassword : 旧密码
+     * @param newPassword : 新密码
+     * @return: java.util.Optional<java.lang.Integer> 1 成功 -1 原密码错误 null token无效
+     */
+    Optional<Integer> updatePassword(String token, String oldPassword, String newPassword);
+
+    /**
+     * 修改联系手机
+     *
+     * @param token :
+     * @param phone :
+     * @return: java.util.Optional<java.lang.Integer>
+     */
+    Optional<Integer> updatePhone(String token, String phone);
+
 }
