@@ -6,10 +6,7 @@ import cn.cmcc.diseasemonitor.util.RedisUtil;
 import cn.cmcc.diseasemonitor.util.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 不知道怎么取名字 实验室人员相关接口： 登录 个人信息  修改个人信息等
@@ -46,4 +43,5 @@ public class LaboratoryController {
             return ControllerUtil.getFalseResultMsgBySelf("权限错误2");
         }
     }
+
 }
