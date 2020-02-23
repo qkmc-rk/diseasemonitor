@@ -1,7 +1,6 @@
 package cn.cmcc.diseasemonitor.repository;
 
 import cn.cmcc.diseasemonitor.entity.User;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +17,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             " from user left join laboratory on user.id = laboratory.user_id where user.id = ?1",
             nativeQuery = true)
     Optional<Map<String, Object>> findUserInfoAndPhone(Integer id);
+
 }
