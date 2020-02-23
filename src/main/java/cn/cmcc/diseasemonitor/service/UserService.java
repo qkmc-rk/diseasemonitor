@@ -1,6 +1,5 @@
 package cn.cmcc.diseasemonitor.service;
 
-import cn.cmcc.diseasemonitor.entity.Laboratory;
 import cn.cmcc.diseasemonitor.entity.User;
 
 import java.util.Map;
@@ -25,6 +24,14 @@ public interface UserService {
      * @return: cn.cmcc.diseasemonitor.entity.User
      */
     Optional<Map<String, Object>> findUserInfoAndPhone(String token);
+
+    /**
+     * 获取登录用户UserId
+     *
+     * @param token :
+     * @return: java.util.Optional<java.lang.Integer>
+     */
+    Optional<Integer> findUserIdByToken(String token);
 
     /**
      * 获取登录用户

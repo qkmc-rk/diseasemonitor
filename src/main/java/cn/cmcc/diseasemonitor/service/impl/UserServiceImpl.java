@@ -13,6 +13,7 @@ import cn.cmcc.diseasemonitor.repository.UserRepository;
 
 import javax.swing.text.html.Option;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -52,20 +53,23 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Optional findUserInfoAndPhone(String token) {
-        return findUserByToken(token).map((v) -> resp.findUserInfoAndPhone(v.getId())).orElse(Optional.empty());
+    public Optional<Map<String, Object>> findUserInfoAndPhone(String token) {
+        return findUserIdByToken(token).map(resp::findUserInfoAndPhone).orElse(Optional.empty());
+    }
+
+
+    @Override
+    public Optional<Integer> findUserIdByToken(String token) {
+        /* 获取用户ID */
+        Optional<String> idOpt = Optional.ofNullable(
+                RedisUtil.getInstance().readDataFromRedis(token));
+        return idOpt.map((v) -> Optional.of(Integer.valueOf(v))).orElse(Optional.empty());
     }
 
 
     @Override
     public Optional<User> findUserByToken(String token) {
-        /* 获取用户ID */
-        Optional<String> idOpt = Optional.ofNullable(
-                RedisUtil.getInstance().readDataFromRedis(token));
-        /* 返回用户信息 */
-        return idOpt.map((v) ->
-                resp.findById(Integer.valueOf(v))
-        ).orElse(Optional.empty());
+        return this.findUserIdByToken(token).map(resp::findById).orElse(Optional.empty());
     }
 
 
@@ -99,8 +103,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<Integer> updatePhone(String token, String phone) {
-        return this.findUserByToken(token).map((v) -> {
-            return laboratoryRepository.findByUserId(v.getId()).map(
+        return this.findUserIdByToken(token).map((v) -> {
+            return laboratoryRepository.findByUserId(v).map(
                     (k) -> {
                         k.setPhone(phone);
                         laboratoryRepository.save(k);
