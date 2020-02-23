@@ -6,12 +6,10 @@ import cn.cmcc.diseasemonitor.service.LaboratoryService;
 import cn.cmcc.diseasemonitor.service.PicService;
 import cn.cmcc.diseasemonitor.service.RepertoryService;
 import cn.cmcc.diseasemonitor.util.ResponseEntity;
-import cn.cmcc.diseasemonitor.vo.TestItem;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 /**
@@ -23,6 +21,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/laboratory")
+@CrossOrigin
 public class LabSettingController {
 
     @Autowired

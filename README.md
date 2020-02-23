@@ -14,3 +14,6 @@ diseasemonitor
 
 # 2020 - 02 - 22
 - mrruan: 增加 LabSettingController, FileController
+
+# 2020 -02 - 23
+- mrruan: 增加跨域支持
