@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/lab")
-public class LaboratoryController {
-
+@CrossOrigin
+public class AuthController {
 
     @Autowired
     UserService userService;
@@ -25,7 +25,7 @@ public class LaboratoryController {
         //校验密码
         Integer rs = userService.login(username, password);
         if (null == rs){
-            rs = -100;
+            rs = Constant.UNKNOWN_ERROR;
         }
         if (rs > 0){
             //登录成功
@@ -43,5 +43,4 @@ public class LaboratoryController {
             return ControllerUtil.getFalseResultMsgBySelf("权限错误2");
         }
     }
-
 }

@@ -11,3 +11,9 @@ diseasemonitor
 
 # 2020 - 02 - 21
 - mrruan: 增加登录接口(未使用权限接口),使用redis存储token,过期时间15mins.
+
+# 2020 - 02 - 22
+- mrruan: 增加 LabSettingController, FileController
+
+# 2020 -02 - 23
+- mrruan: 增加跨域支持

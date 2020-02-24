@@ -1,9 +1,10 @@
 package cn.cmcc.diseasemonitor.service.impl;
 
 import cn.cmcc.diseasemonitor.entity.Laboratory;
-import cn.cmcc.diseasemonitor.entity.User;
-import cn.cmcc.diseasemonitor.service.LaboratoryService;
-import cn.cmcc.diseasemonitor.service.UserService;
+import cn.cmcc.diseasemonitor.entity.OrderRecord;
+import cn.cmcc.diseasemonitor.entity.Pic;
+import cn.cmcc.diseasemonitor.service.*;
+import cn.cmcc.diseasemonitor.util.constant.LogisticsStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,17 +13,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import cn.cmcc.diseasemonitor.entity.Order;
-import cn.cmcc.diseasemonitor.service.OrderService;
 import cn.cmcc.diseasemonitor.repository.OrderRepository;
 
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
     @Autowired
     private OrderRepository resp;
 
@@ -31,6 +30,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     LaboratoryService laboratoryService;
+
+    @Autowired
+    OrderRecordService orderRecordService;
+
+    @Autowired
+    OrderSonService orderSonService;
+
+    @Autowired
+    PicService picService;
 
     @Override
     public Page<Order> findAllByTimeAndStatus(Long startTime, Long endTime, String status,
@@ -79,4 +87,106 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
     }
+
+    @Override
+    public Order searchOrder(String type, String sn, String token) {
+        // 获取实验室ID
+        Optional<Integer> laboratoryId = Optional.ofNullable(userService.findUserIdByToken(token).map(
+                (v) -> laboratoryService.findByUserId(v).map(
+                        (k) -> k.getId()).orElse(null)).orElse(null));
+        if (laboratoryId.isPresent()) {
+            if (type.equals("logistics")) {
+                return resp.findByLogisticsNumAndLaboratoryId(sn, laboratoryId.get());
+            } else if (type.equals("order")) {
+                return resp.findByOrderSnAndLaboratoryId(sn, laboratoryId.get());
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public Integer received(Integer id, String token) {
+        Optional<Order> orderOptional = resp.findById(id);
+        Optional<Integer> laboratoryId = Optional.ofNullable(userService.findUserIdByToken(token).map(
+                (v) -> laboratoryService.findByUserId(v).map(
+                        (k) -> k.getId()).orElse(null)).orElse(null));
+        if (orderOptional.isPresent() && laboratoryId.isPresent()) {
+            Order order = orderOptional.get();
+            Integer labId = laboratoryId.get();
+            // 检查实验室ID与订单中的实验室ID是否相同
+            if (order.getLaboratoryId().equals(labId)) {
+                // 修改订单状态 为已收样
+                order.setStatus("4");
+                resp.save(order);
+                // 保存订单操作记录
+                OrderRecord orderRecord = new OrderRecord();
+                orderRecord.setType("4");
+                orderRecord.setOrderId(order.getId());
+                orderRecord.setTime(System.currentTimeMillis());
+                orderRecordService.save(orderRecord);
+                return 1;
+            }
+        }
+        return -1;
+    }
+
+
+    @Override
+    public Optional<Order> findById(Integer id) {
+        return resp.findById(id);
+    }
+
+
+    @Override
+    public Optional<Map<String, Object>> findOrderInfoByOrderSn(String sn, String token) {
+
+        Optional<Integer> laboratoryId = Optional.ofNullable(userService.findUserIdByToken(token).map(
+                (v) -> laboratoryService.findByUserId(v).map(
+                        (k) -> k.getId()).orElse(null)).orElse(null));
+        // 用户token无效退出
+        if (!laboratoryId.isPresent()) return Optional.empty();
+
+        Map<String, Object> map = new HashMap<>();
+        Optional<Map<String, Object>> baseInfoMap = resp.findOrderInfoByOrderSn(sn);
+        baseInfoMap.ifPresent((v) -> {
+            // A TupleBackedMap cannot be modified. 重新建一个
+            Map<String, Object> baseMap = new HashMap<>();
+            baseMap.putAll(v);
+            Integer labId = (Integer) v.get("laboratory_id");
+            // 用户ID与订单实验室ID不匹配就不再继续查询
+            if (labId != null && labId.equals(laboratoryId.get())) {
+                // 获取子订单列表
+                map.put("commodities", orderSonService.findAllByOrderId((Integer) v.get("id")));
+                //获取pic id数组字符串
+                String ids = (String) v.get("sample_ids");
+
+                //如果不为空
+                if (ids != null && ids.length() > 2) {
+                    // 去掉中括号
+                    ids = ids.substring(1, ids.length() - 1);
+                    // 转成整型数组存到intList里面去
+                    List<Integer> intList = new ArrayList<>();
+                    List strList = Arrays.asList(ids.split(","));
+                    strList.forEach((k) -> {
+                        intList.add(Integer.valueOf((String) k));
+                    });
+                    map.put("images", picService.findPicUrlListByIdIn(intList));
+                } else {
+                    map.put("images", null);
+                }
+                // 删除多余字段
+                baseMap.remove("id");
+                baseMap.remove("laboratory_id");
+                baseMap.remove("sample_ids");
+                map.put("info", baseMap);
+            }
+        });
+        if (map.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(map);
+    }
+
+
 }

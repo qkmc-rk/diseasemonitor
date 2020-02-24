@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -26,10 +28,25 @@ public class OrderController {
                 pageNum, pageSize, token));
     }
 
-//    @GetMapping("/search/{type}/{sn}")
-//    @ApiOperation(value = "订单编号查找和运单号查找")
-//    public ResponseEntity findOrder(@PathVariable String type, @PathVariable String sn,
-//                                    @RequestHeader("token") String token) {
-//
-//    }
+    @GetMapping("/search/{type}/{sn}")
+    @ApiOperation(value = "订单编号查找和运单号查找", notes = "type: 'order'(订单号查找),'logistics'(运单号查找)\nsn:单号")
+    public ResponseEntity findOrder(@PathVariable String type, @PathVariable String sn,
+                                    @RequestHeader("token") String token) {
+        return ControllerUtil.getDataResult(orderService.searchOrder(type, sn, token));
+    }
+
+    @GetMapping("/received/{id}")
+    @ApiOperation(value = "确认收样")
+    public ResponseEntity received(@PathVariable Integer id, @RequestHeader("token") String token) {
+        Integer status = orderService.received(id, token);
+        if (status == 1) return ControllerUtil.getTrueOrFalseResult(true);
+        else return ControllerUtil.getTrueOrFalseResult(false);
+    }
+
+    @GetMapping("/detail/{sn}")
+    @ApiOperation(value = "返回订单详细信息")
+    public ResponseEntity detail(@PathVariable String sn, @RequestHeader("token") String token) {
+        return orderService.findOrderInfoByOrderSn(sn, token).map(ControllerUtil::getSuccessResultBySelf).orElse(
+                ControllerUtil.getFalseResultMsgBySelf("未查询到数据"));
+    }
 }

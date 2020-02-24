@@ -8,6 +8,11 @@ import cn.cmcc.diseasemonitor.repository.OrderRecordRepository;
 
 @Service
 public class OrderRecordServiceImpl implements OrderRecordService {
-	@Autowired
-	private OrderRecordRepository resp;
+    @Autowired
+    private OrderRecordRepository resp;
+
+    @Override
+    public void save(OrderRecord orderRecord) {
+        resp.save(orderRecord);
+    }
 }
