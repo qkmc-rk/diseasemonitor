@@ -8,8 +8,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -35,12 +33,30 @@ public class OrderController {
         return ControllerUtil.getDataResult(orderService.searchOrder(type, orderSn, token));
     }
 
-    @GetMapping("/received/{orderSn}")
+    @GetMapping("/receive/{orderSn}")
     @ApiOperation(value = "确认收样")
     public ResponseEntity received(@PathVariable String orderSn, @RequestHeader("token") String token) {
-        Integer status = orderService.received(orderSn, token);
+        Integer status = orderService.receive(orderSn, token);
         if (status == 1) return ControllerUtil.getTrueOrFalseResult(true);
-        else if (status == -2) return ControllerUtil.getFalseResultMsgBySelf("请勿重复确认");
+        else if (status == -2) return ControllerUtil.getFalseResultMsgBySelf("确认失败");
+        else return ControllerUtil.getFalseResultMsgBySelf("订单不存在或用户无权限");
+    }
+
+    @GetMapping("/complete/{orderSn}")
+    @ApiOperation(value = "完成订单")
+    public ResponseEntity complete(@PathVariable String orderSn, @RequestHeader("token") String token) {
+        Integer status = orderService.complete(orderSn, token);
+        if (status == 1) return ControllerUtil.getTrueOrFalseResult(true);
+        else if (status == -2) return ControllerUtil.getFalseResultMsgBySelf("确认失败");
+        else return ControllerUtil.getFalseResultMsgBySelf("订单不存在或用户无权限");
+    }
+
+    @GetMapping("/cancel/{orderSn}")
+    @ApiOperation(value = "取消订单")
+    public ResponseEntity cancel(@PathVariable String orderSn, @RequestHeader("token") String token) {
+        Integer status = orderService.cancel(orderSn, token);
+        if (status == 1) return ControllerUtil.getTrueOrFalseResult(true);
+        else if (status == -2) return ControllerUtil.getFalseResultMsgBySelf("取消失败");
         else return ControllerUtil.getFalseResultMsgBySelf("订单不存在或用户无权限");
     }
 

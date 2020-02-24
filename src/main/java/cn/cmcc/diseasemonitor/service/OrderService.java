@@ -34,11 +34,29 @@ public interface OrderService {
     /**
      * 确认收样
      *
-     * @param id    : orderId
+     * @param sn    :
      * @param token :
      * @return: java.lang.Integer
      */
-    Integer received(String sn, String token);
+    Integer receive(String sn, String token);
+
+    /**
+     * 完成订单
+     *
+     * @param sn    :
+     * @param token :
+     * @return: java.lang.Integer
+     */
+    Integer complete(String sn, String token);
+
+    /**
+     * 取消订单
+     *
+     * @param sn    :
+     * @param token :
+     * @return: java.lang.Integer
+     */
+    Integer cancel(String sn, String token);
 
     /**
      * @param id :

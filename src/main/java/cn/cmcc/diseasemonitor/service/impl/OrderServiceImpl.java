@@ -106,15 +106,16 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Integer received(String sn, String token) {
+    public Integer receive(String sn, String token) {
         Optional<Order> orderOptional = resp.findByOrderSn(sn);
         Optional<Integer> laboratoryId = Optional.ofNullable(userService.findUserIdByToken(token).map(
                 (v) -> laboratoryService.findByUserId(v).map(
                         (k) -> k.getId()).orElse(null)).orElse(null));
         if (orderOptional.isPresent() && laboratoryId.isPresent()) {
             Order order = orderOptional.get();
-            // 已签收 退出
-            if (Integer.valueOf(order.getStatus()) > 3) return -2;
+            String[] status = {"4", "5", "0"};
+            // 已完成 已签收 已取消 退出
+            if (Arrays.asList(status).contains(order.getStatus())) return -2;
             Integer labId = laboratoryId.get();
             // 检查实验室ID与订单中的实验室ID是否相同
             if (order.getLaboratoryId().equals(labId)) {
@@ -124,6 +125,64 @@ public class OrderServiceImpl implements OrderService {
                 // 保存订单操作记录
                 OrderRecord orderRecord = new OrderRecord();
                 orderRecord.setType("4");
+                orderRecord.setOrderId(order.getId());
+                orderRecord.setTime(System.currentTimeMillis());
+                orderRecordService.save(orderRecord);
+                return 1;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public Integer complete(String sn, String token) {
+        Optional<Order> orderOptional = resp.findByOrderSn(sn);
+        Optional<Integer> laboratoryId = Optional.ofNullable(userService.findUserIdByToken(token).map(
+                (v) -> laboratoryService.findByUserId(v).map(
+                        (k) -> k.getId()).orElse(null)).orElse(null));
+        if (orderOptional.isPresent() && laboratoryId.isPresent()) {
+            Order order = orderOptional.get();
+            String[] status = {"1", "2", "3", "5", "6", "0"};
+            // 未签收 已完成 已取消  退款中 退出
+            if (Arrays.asList(status).contains(order.getStatus())) return -2;
+            Integer labId = laboratoryId.get();
+            // 检查实验室ID与订单中的实验室ID是否相同
+            if (order.getLaboratoryId().equals(labId)) {
+                // 修改订单状态 为已完成
+                order.setStatus("5");
+                resp.save(order);
+                // 保存订单操作记录
+                OrderRecord orderRecord = new OrderRecord();
+                orderRecord.setType("5");
+                orderRecord.setOrderId(order.getId());
+                orderRecord.setTime(System.currentTimeMillis());
+                orderRecordService.save(orderRecord);
+                return 1;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public Integer cancel(String sn, String token) {
+        Optional<Order> orderOptional = resp.findByOrderSn(sn);
+        Optional<Integer> laboratoryId = Optional.ofNullable(userService.findUserIdByToken(token).map(
+                (v) -> laboratoryService.findByUserId(v).map(
+                        (k) -> k.getId()).orElse(null)).orElse(null));
+        if (orderOptional.isPresent() && laboratoryId.isPresent()) {
+            Order order = orderOptional.get();
+            String[] status = {"0", "3", "4", "5", "6"};
+            // 已取消 已寄出 已收样 已完成  退款中 退出
+            if (Arrays.asList(status).contains(order.getStatus())) return -2;
+            Integer labId = laboratoryId.get();
+            // 检查实验室ID与订单中的实验室ID是否相同
+            if (order.getLaboratoryId().equals(labId)) {
+                // 修改订单状态 已取消
+                order.setStatus("0");
+                resp.save(order);
+                // 保存订单操作记录
+                OrderRecord orderRecord = new OrderRecord();
+                orderRecord.setType("0");
                 orderRecord.setOrderId(order.getId());
                 orderRecord.setTime(System.currentTimeMillis());
                 orderRecordService.save(orderRecord);
