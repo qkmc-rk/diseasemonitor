@@ -28,25 +28,26 @@ public class OrderController {
                 pageNum, pageSize, token));
     }
 
-    @GetMapping("/search/{type}/{sn}")
+    @GetMapping("/search/{type}/{orderSn}")
     @ApiOperation(value = "订单编号查找和运单号查找", notes = "type: 'order'(订单号查找),'logistics'(运单号查找)\nsn:单号")
-    public ResponseEntity findOrder(@PathVariable String type, @PathVariable String sn,
+    public ResponseEntity findOrder(@PathVariable String type, @PathVariable String orderSn,
                                     @RequestHeader("token") String token) {
-        return ControllerUtil.getDataResult(orderService.searchOrder(type, sn, token));
+        return ControllerUtil.getDataResult(orderService.searchOrder(type, orderSn, token));
     }
 
-    @GetMapping("/received/{id}")
+    @GetMapping("/received/{orderSn}")
     @ApiOperation(value = "确认收样")
-    public ResponseEntity received(@PathVariable Integer id, @RequestHeader("token") String token) {
-        Integer status = orderService.received(id, token);
+    public ResponseEntity received(@PathVariable String orderSn, @RequestHeader("token") String token) {
+        Integer status = orderService.received(orderSn, token);
         if (status == 1) return ControllerUtil.getTrueOrFalseResult(true);
-        else return ControllerUtil.getTrueOrFalseResult(false);
+        else if (status == -2) return ControllerUtil.getFalseResultMsgBySelf("请勿重复确认");
+        else return ControllerUtil.getFalseResultMsgBySelf("订单不存在或用户无权限");
     }
 
-    @GetMapping("/detail/{sn}")
+    @GetMapping("/detail/{orderSn}")
     @ApiOperation(value = "返回订单详细信息")
-    public ResponseEntity detail(@PathVariable String sn, @RequestHeader("token") String token) {
-        return orderService.findOrderInfoByOrderSn(sn, token).map(ControllerUtil::getSuccessResultBySelf).orElse(
+    public ResponseEntity detail(@PathVariable String orderSn, @RequestHeader("token") String token) {
+        return orderService.findOrderInfoByOrderSn(orderSn, token).map(ControllerUtil::getSuccessResultBySelf).orElse(
                 ControllerUtil.getFalseResultMsgBySelf("未查询到数据"));
     }
 }

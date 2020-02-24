@@ -106,13 +106,15 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Integer received(Integer id, String token) {
-        Optional<Order> orderOptional = resp.findById(id);
+    public Integer received(String sn, String token) {
+        Optional<Order> orderOptional = resp.findByOrderSn(sn);
         Optional<Integer> laboratoryId = Optional.ofNullable(userService.findUserIdByToken(token).map(
                 (v) -> laboratoryService.findByUserId(v).map(
                         (k) -> k.getId()).orElse(null)).orElse(null));
         if (orderOptional.isPresent() && laboratoryId.isPresent()) {
             Order order = orderOptional.get();
+            // 已签收 退出
+            if (Integer.valueOf(order.getStatus()) > 3) return -2;
             Integer labId = laboratoryId.get();
             // 检查实验室ID与订单中的实验室ID是否相同
             if (order.getLaboratoryId().equals(labId)) {

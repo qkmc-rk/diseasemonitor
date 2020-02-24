@@ -38,7 +38,7 @@ public interface OrderService {
      * @param token :
      * @return: java.lang.Integer
      */
-    Integer received(Integer id, String token);
+    Integer received(String sn, String token);
 
     /**
      * @param id :
