@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.*;
  * 检测项目配置:查询检测项目列表(已上架(查详情/编辑/下架)/已下架(查详情/编辑/下架))
  *
  */
+
 @RestController
-@RequestMapping("/laboratory")
 @CrossOrigin
+@RequestMapping("/laboratory")
 public class LabSettingController {
 
     @Autowired

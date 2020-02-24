@@ -16,8 +16,8 @@ import java.io.OutputStream;
  * 不知道怎么取名字 实验室人员相关接口： 登录 个人信息  修改个人信息等
  */
 @RestController
-@RequestMapping("/lab")
 @CrossOrigin
+@RequestMapping("/lab")
 public class AuthController {
 
     @Autowired
