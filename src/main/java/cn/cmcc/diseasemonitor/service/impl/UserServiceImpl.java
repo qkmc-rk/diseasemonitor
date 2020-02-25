@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Integer> updateUserName(String token, String username) {
         return this.findUserByToken(token).map((v) -> {
-            v.setUserName(username);
+            v.setNickname(username);
             resp.save(v);
             return Optional.of(1);
         }).orElse(Optional.empty());
@@ -127,10 +127,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Integer> updatePhone(String token, String phone) {
         return this.findUserIdByToken(token).map((v) -> {
-            return laboratoryRepository.findByUserId(v).map(
+            return resp.findById(v).map(
                     (k) -> {
                         k.setPhone(phone);
-                        laboratoryRepository.save(k);
+                        resp.save(k);
                         return Optional.of(1);
                     }
             ).orElse(Optional.empty());

@@ -56,4 +56,10 @@ public class User {
 	 */
 	@Column(name = "status", nullable = false)
 	private String status;
+	@Column(name = "phone", nullable = true)
+	private String phone;
+	@Column(name = "nickname", nullable = true)
+	private String nickname;
+	@Column(name = "mail", nullable = true)
+	private String mail;
 }
