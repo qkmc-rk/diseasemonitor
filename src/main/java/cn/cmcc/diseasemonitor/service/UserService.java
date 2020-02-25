@@ -94,5 +94,13 @@ public interface UserService {
      * @param phone
      * @return
      */
-    String generateSMScode(String ipAddr, String verifyCode, String phone);
+    Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone);
+
+    /**
+     * 修改密码
+     * @param phoneCode
+     * @param newPwd
+     * @return
+     */
+    Map<String, String> changePwd(String phoneCode, String newPwd);
 }

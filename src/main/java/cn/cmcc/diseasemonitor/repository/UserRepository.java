@@ -18,4 +18,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             nativeQuery = true)
     Optional<Map<String, Object>> findUserInfoAndPhone(Integer id);
 
+    /**
+     * 通过手机号码找到用户 手机号码应该是唯一的。
+     * @param phone
+     * @return
+     */
+    User findByPhone(String phone);
+
 }

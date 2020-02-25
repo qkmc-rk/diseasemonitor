@@ -30,7 +30,6 @@ public class RedisUtil {
     }
 
     public void setDataToRedis(String key, String value, Integer min) {
-        System.out.println("嘿嘿： " + stringRedisTemplate);
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         valueOperations.set(key, value, min, TimeUnit.MINUTES);
     }

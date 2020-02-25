@@ -83,11 +83,18 @@ public class AuthController {
      * 传入手机号码，验证码，生成一个验证码存到redis
      * 前台通过手机接收到的验证码和密码进行修改密码
      */
-    @Deprecated
+    @GetMapping("/phonecode")
+    @ApiOperation(value = "获取手机验证码")
     public ResponseEntity generateSMScode(HttpServletRequest request
             , String verifyCode
             , String phone){
-        //String phoneNumber = userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone);
-        return null;
+        return ControllerUtil.getDataResult(userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone));
+    }
+
+    @PostMapping("/password")
+    @ApiOperation(value = "修改密码,需要手机号, 验证码, 新的密码")
+    public ResponseEntity changePwd(@RequestParam String phoneCode
+            , @RequestParam String newPwd){
+        return ControllerUtil.getDataResult(userService.changePwd(phoneCode, newPwd));
     }
 }
