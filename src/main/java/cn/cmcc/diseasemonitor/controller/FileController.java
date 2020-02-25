@@ -11,8 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
  * 这个controller主要用来上传下载图片等作用
  */
 @RestController
-@RequestMapping("/file")
 @CrossOrigin
+@RequestMapping("/file")
 public class FileController {
 
     @Autowired

@@ -1,15 +1,11 @@
 package cn.cmcc.diseasemonitor.repository;
 
 import cn.cmcc.diseasemonitor.entity.Order;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
-import sun.jvm.hotspot.debugger.Page;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 

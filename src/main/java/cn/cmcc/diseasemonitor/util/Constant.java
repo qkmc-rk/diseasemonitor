@@ -80,5 +80,6 @@ public interface Constant {
     public static final Integer ERROR_PWD = -2;
     public static final Integer NO_PERMISSION = -1;
     public static final Integer UNKNOWN_ERROR = -100;
-
+    public static final Integer VERIFYCODE_ERROR = -101;
+    public static final Integer VERIFYCODE_NONE = -102;
 }
