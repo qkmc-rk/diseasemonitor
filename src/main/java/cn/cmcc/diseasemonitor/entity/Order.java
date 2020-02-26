@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 /**
  * 订单表
  */
+
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
