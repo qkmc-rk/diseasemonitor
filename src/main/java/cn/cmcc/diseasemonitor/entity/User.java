@@ -27,6 +27,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
+	@JoinColumn(name = "id",referencedColumnName = "user_id")
 	private Integer id;
 
 	/**

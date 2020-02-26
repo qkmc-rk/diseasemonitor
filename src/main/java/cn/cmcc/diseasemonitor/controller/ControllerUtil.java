@@ -36,7 +36,7 @@ public class ControllerUtil {
 
     public static <T> ResponseEntity<T> getDataResult(Page page) {
         ResponseEntity<T> responseEntity = new ResponseEntity<>();
-        if (!page.isEmpty()) {
+        if (page != null && !page.isEmpty()) {
             Map<String, Object> map = new HashMap<>();
             map.put("currentPage", page.getNumber());
             map.put("totalPages", page.getTotalPages() - 1);

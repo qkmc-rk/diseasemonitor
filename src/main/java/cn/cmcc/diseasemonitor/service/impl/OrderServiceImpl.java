@@ -1,10 +1,10 @@
 package cn.cmcc.diseasemonitor.service.impl;
 
-import cn.cmcc.diseasemonitor.entity.Laboratory;
-import cn.cmcc.diseasemonitor.entity.OrderRecord;
-import cn.cmcc.diseasemonitor.entity.Pic;
+import cn.cmcc.diseasemonitor.entity.*;
+import cn.cmcc.diseasemonitor.entity.Order;
 import cn.cmcc.diseasemonitor.service.*;
 import cn.cmcc.diseasemonitor.util.constant.LogisticsStatusType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,12 +12,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import cn.cmcc.diseasemonitor.entity.Order;
 import cn.cmcc.diseasemonitor.repository.OrderRepository;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.util.*;
-
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -40,9 +41,12 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     PicService picService;
 
+
     @Override
-    public Page<Order> findAllByTimeAndStatus(Long startTime, Long endTime, String status,
-                                              Integer pageNum, Integer pageSize, String token) {
+    public Page<Map<String, Object>> findByConditions(String status, String orderSn, String logisticsSn,
+                                                      Float payable, Long startTime, Long endTime,
+                                                      String phone, String company,
+                                                      Integer pageNum, Integer pageSize, String token) {
         Optional<Integer> userIdOpt = userService.findUserIdByToken(token);
         // 如果token有效 查询用户是否有实验室 代码太长 用lambda看的头晕
         if (userIdOpt.isPresent()) {
@@ -52,32 +56,9 @@ public class OrderServiceImpl implements OrderService {
                 // 先拿到实验Id
                 Integer labId = laboratoryOpt.get().getId();
                 // 设置分页信息
-                Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.Direction.DESC, "createTime");
-                // 设置查询条件
-                Specification<Order> specification = new Specification<Order>() {
-                    @Override
-                    public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                        Path<Integer> labIdPath = root.get("laboratoryId");
-                        // 匹配实验室ID
-                        Predicate predicate = criteriaBuilder.equal(labIdPath, labId);
-
-                        /* 筛选时间段 */
-                        if (startTime != null && endTime != null) {
-                            Path<Long> createTimePath = root.get("createTime");
-                            Predicate createTimeBetween = criteriaBuilder.between(createTimePath, startTime, endTime);
-                            predicate = criteriaBuilder.and(predicate, createTimeBetween);
-                        }
-
-                        /* 筛选订单状态 */
-                        if (status != null && !status.isEmpty()) {
-                            Path<String> statusPath = root.get("status");
-                            Predicate statusEq = criteriaBuilder.equal(statusPath, status);
-                            predicate = criteriaBuilder.and(predicate, statusEq);
-                        }
-                        return criteriaBuilder.and(predicate);
-                    }
-                };
-                return resp.findAll(specification, pageable);
+                Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.Direction.DESC, "create_time");
+                return resp.findByConditions(labId, status, orderSn, logisticsSn, payable, startTime,
+                        endTime, phone, company, pageable);
             } else {
                 // 没有实验室 拜拜
                 return null;
@@ -87,23 +68,6 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
     }
-
-    @Override
-    public Order searchOrder(String type, String sn, String token) {
-        // 获取实验室ID
-        Optional<Integer> laboratoryId = Optional.ofNullable(userService.findUserIdByToken(token).map(
-                (v) -> laboratoryService.findByUserId(v).map(
-                        (k) -> k.getId()).orElse(null)).orElse(null));
-        if (laboratoryId.isPresent()) {
-            if (type.equals("logistics")) {
-                return resp.findByLogisticsNumAndLaboratoryId(sn, laboratoryId.get());
-            } else if (type.equals("order")) {
-                return resp.findByOrderSnAndLaboratoryId(sn, laboratoryId.get());
-            }
-        }
-        return null;
-    }
-
 
     @Override
     public Integer receive(String sn, String token) {
@@ -192,13 +156,6 @@ public class OrderServiceImpl implements OrderService {
         return -1;
     }
 
-
-    @Override
-    public Optional<Order> findById(Integer id) {
-        return resp.findById(id);
-    }
-
-
     @Override
     public Optional<Map<String, Object>> findOrderInfoByOrderSn(String sn, String token) {
 
@@ -219,6 +176,7 @@ public class OrderServiceImpl implements OrderService {
             if (labId != null && labId.equals(laboratoryId.get())) {
                 // 获取子订单列表
                 map.put("commodities", orderSonService.findAllByOrderId((Integer) v.get("id")));
+                map.put("statuses", orderRecordService.findAllByOrderId((Integer) v.get("id")));
                 //获取pic id数组字符串
                 String ids = (String) v.get("sample_ids");
 
@@ -239,7 +197,6 @@ public class OrderServiceImpl implements OrderService {
                 // 删除多余字段
                 baseMap.remove("id");
                 baseMap.remove("laboratory_id");
-                baseMap.remove("sample_ids");
                 map.put("info", baseMap);
             }
         });
