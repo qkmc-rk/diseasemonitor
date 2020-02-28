@@ -104,16 +104,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone) {
+    public Map<String, String> generateSMScode(String ipAddr,
+                                               String verifyCode,
+                                               String phone,
+                                               String token) {
+        String tokenUserId = RedisUtil.getInstance().readDataFromRedis(token);
         // 先验证图片验证码, 防止恶意发送手机验证码
         Map<String, String> rs = new HashMap<>();
         String verify = RedisUtil.getInstance().readDataFromRedis(ipAddr + "verifycode");
-        if (verifyCode == null || !verifyCode.toLowerCase().equals(verify.toLowerCase())){
-            rs.put("ERROR", "请输入正确的图片验证码");
-            return rs;
+        if (null == tokenUserId){
+            if (verifyCode == null || !verifyCode.toLowerCase().equals(verify.toLowerCase())){
+                rs.put("ERROR", "请输入正确的图片验证码");
+                return rs;
+            }
+            // 清除验证码
+            RedisUtil.getInstance().setDataToRedis(ipAddr + "verifycode","",30);
         }
-        // 清除验证码
-        RedisUtil.getInstance().setDataToRedis(ipAddr + "verifycode","",30);
         User user;
         try {
             user = resp.findByPhone(phone);

@@ -94,7 +94,7 @@ public interface UserService {
      * @param phone
      * @return
      */
-    Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone);
+    Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone, String token);
 
     /**
      * 修改密码

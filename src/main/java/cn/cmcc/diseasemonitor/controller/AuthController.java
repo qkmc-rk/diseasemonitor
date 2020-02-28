@@ -71,10 +71,11 @@ public class AuthController {
      */
     @GetMapping("/phonecode")
     @ApiOperation(value = "获取手机验证码")
-    public ResponseEntity generateSMScode(HttpServletRequest request
-            , String verifyCode
-            , String phone){
-        return ControllerUtil.getDataResult(userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone));
+    public ResponseEntity generateSMScode(HttpServletRequest request,
+                                          String verifyCode,
+                                          String phone,
+                                          @RequestHeader String token){
+        return ControllerUtil.getDataResult(userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone, token));
     }
 
     @PostMapping("/password")
