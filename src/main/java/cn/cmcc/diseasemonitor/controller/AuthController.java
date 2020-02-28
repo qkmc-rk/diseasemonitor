@@ -85,6 +85,12 @@ public class AuthController {
         return ControllerUtil.getDataResult(userService.changePwd(phoneCode, newPwd));
     }
 
+    @GetMapping("/token/expire")
+    public ResponseEntity tokenExpire(@RequestHeader String token){
+        String tokenUserId = RedisUtil.getInstance().readDataFromRedis(token);
+        return ControllerUtil.getTrueOrFalseResult(!(null == tokenUserId));
+    }
+
     /**
      * 登录结果处理
      * @param rs
