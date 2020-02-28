@@ -47,8 +47,9 @@ public class UserController {
     @PostMapping("/phone")
     @ApiOperation(value = "修改联系电话")
     public ResponseEntity updatePhone(@RequestHeader("token") String token,
-                                      @RequestParam String phone) {
-        return userService.updatePhone(token, phone).map((v) ->
+                                      @RequestParam String phone,
+                                      @RequestParam String phoneCode) {
+        return userService.updatePhone(token, phone, phoneCode).map((v) ->
                 ControllerUtil.getSuccessResultBySelf("修改成功")).orElse(
                 ControllerUtil.getFalseResultMsgBySelf("修改失败"));
     }

@@ -28,55 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer login(String username, String password, String verifyCode, String ip) {
-        // 检测是否需要验证码
-        // time 这里是次数  不是时间
-        String timeStr = RedisUtil.getInstance().readDataFromRedis(ip);
-        if (null == timeStr){
-
-        } else {
-            Integer time = Integer.parseInt(timeStr);
-            if (null != time && time >= 3){
-                // 需要验证码 生成的验证码存到 redis  key: ip + verifycode,   value: verifycode
-                String verifyCode2 = RedisUtil.getInstance().readDataFromRedis(ip+"verifycode");
-                if (null == verifyCode2 || verifyCode == null){
-                    return Constant.VERIFYCODE_NONE;
-                }
-                if (!verifyCode.toLowerCase().equals(verifyCode2.toLowerCase())) {
-                    return Constant.VERIFYCODE_ERROR;
-                }
-            }
-        }
-        // 验证码正确 下一步删除验证码 继续登录
-        RedisUtil.getInstance().setDataToRedis(ip+"verifycode","",30);
-        User user = resp.findByUserName(username);
-        if (null == user) {
-            // 没有找到用户
-            addWrongLoginTime(ip);
-            return Constant.NO_USER;
-        }
-        password = MD5Util.trueMd5(password).toUpperCase();
-        String password2 = user.getPasswd().toUpperCase();
-        if (!password.equals(password2)) {
-            //密码不正确
-            addWrongLoginTime(ip);
-            return Constant.ERROR_PWD;
-        }
-        // 查询权限相关,取消权限这一块
-        if (false) {
-            addWrongLoginTime(ip);
-            return Constant.NO_PERMISSION;
-        }
-        //生成token存到redis,返回登录成功
-        String token = MD5Util.trueMd5(Long.toString(new Date().getTime()));
-        boolean rs = RedisUtil.redisUtil.tokenToRedis(user.getId(), token, 15);
-        if (rs) {
-            // 登录成功需要清除登录次数记录
-            clearWrongLoginTime(ip);
-            return user.getId();
-        } else {
-            addWrongLoginTime(ip);
-            return Constant.UNKNOWN_ERROR;
-        }
+        return loginCommon(username, password, verifyCode, ip, false);
     }
 
 
@@ -130,7 +82,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<Integer> updatePhone(String token, String phone) {
+    public Optional<Integer> updatePhone(String token, String phone, String phoneCode) {
+        String phoneFromRedis = RedisUtil.getInstance().readDataFromRedis(phoneCode);
+        if (phoneFromRedis == null || phone == null || !phoneFromRedis.equals(phone)){
+            return Optional.empty();
+        }
         return this.findUserIdByToken(token).map((v) -> {
             return resp.findById(v).map(
                     (k) -> {
@@ -156,7 +112,7 @@ public class UserServiceImpl implements UserService {
             rs.put("ERROR", "请输入正确的图片验证码");
             return rs;
         }
-        // 清楚验证码
+        // 清除验证码
         RedisUtil.getInstance().setDataToRedis(ipAddr + "verifycode","",30);
         User user;
         try {
@@ -168,6 +124,7 @@ public class UserServiceImpl implements UserService {
         }
         if (null == user){
             rs.put("ERROR", "该手机号尚未被绑定");
+            return rs;
         }
 
         //模拟生成手机验证码
@@ -194,6 +151,21 @@ public class UserServiceImpl implements UserService {
         user.setPasswd(MD5Util.trueMd5(newPwd));
         rs.put("SUCCESS","找回密码成功");
         return rs;
+    }
+
+    @Override
+    public Integer loginWithPhone(String phone, String phoneCode, HttpServletRequest request) {
+        String ip = IpUtils.getIpAddr(request);
+        User user = resp.findByPhone(phone);
+        if (null == user){
+            return Constant.NO_USER;
+        }
+        //校验手机验证码
+        String phoneFromRedis = RedisUtil.getInstance().readDataFromRedis(phoneCode);
+        if (phoneFromRedis != null && phone != null && phoneFromRedis.equals(phone))
+            return loginCommon(user.getUserName(), user.getPasswd(), null, ip, true);
+        else
+            return Constant.PHONE_WRONG;
     }
 
     /**
@@ -235,5 +207,63 @@ public class UserServiceImpl implements UserService {
      */
     private  void clearWrongLoginTime(String ip){
         RedisUtil.getInstance().setDataToRedis(ip,"0", 15);
+    }
+
+    /**
+     * 登录公共方法
+     * @return
+     */
+    private Integer loginCommon(String username, String password, String verifyCode, String ip, Boolean isPhone){
+        // 检测是否需要验证码
+        // time 这里是次数  不是时间
+        if (!isPhone){
+            String timeStr = RedisUtil.getInstance().readDataFromRedis(ip);
+            if (null == timeStr){
+                //NULL
+            } else {
+                Integer time = Integer.parseInt(timeStr);
+                if (null != time && time >= 3){
+                    // 需要验证码 生成的验证码存到 redis  key: ip + verifycode,   value: verifycode
+                    String verifyCode2 = RedisUtil.getInstance().readDataFromRedis(ip+"verifycode");
+                    if (null == verifyCode2 || verifyCode == null){
+                        return Constant.VERIFYCODE_NONE;
+                    }
+                    if (!verifyCode.toLowerCase().equals(verifyCode2.toLowerCase())) {
+                        return Constant.VERIFYCODE_ERROR;
+                    }
+                }
+            }
+        }
+        // 验证码正确 下一步删除验证码 继续登录
+        RedisUtil.getInstance().setDataToRedis(ip+"verifycode","",30);
+        User user = resp.findByUserName(username);
+        if (null == user) {
+            // 没有找到用户
+            addWrongLoginTime(ip);
+            return Constant.NO_USER;
+        }
+        password = isPhone? password.toUpperCase(): MD5Util.trueMd5(password).toUpperCase();
+        String password2 = user.getPasswd().toUpperCase();
+        if (!password.equals(password2)) {
+            //密码不正确
+            addWrongLoginTime(ip);
+            return Constant.ERROR_PWD;
+        }
+        // 查询权限相关,取消权限这一块
+        if (false) {
+            addWrongLoginTime(ip);
+            return Constant.NO_PERMISSION;
+        }
+        //生成token存到redis,返回登录成功
+        String token = MD5Util.trueMd5(Long.toString(new Date().getTime()));
+        boolean rs = RedisUtil.redisUtil.tokenToRedis(user.getId(), token, 15);
+        if (rs) {
+            // 登录成功需要清除登录次数记录
+            clearWrongLoginTime(ip);
+            return user.getId();
+        } else {
+            addWrongLoginTime(ip);
+            return Constant.UNKNOWN_ERROR;
+        }
     }
 }
