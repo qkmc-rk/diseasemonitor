@@ -72,9 +72,9 @@ public class AuthController {
     @GetMapping("/phonecode")
     @ApiOperation(value = "获取手机验证码")
     public ResponseEntity generateSMScode(HttpServletRequest request,
-                                          String verifyCode,
+                                          @RequestParam(required = false) String verifyCode,
                                           String phone,
-                                          @RequestHeader String token){
+                                          @RequestHeader(required = false) String token){
         return ControllerUtil.getDataResult(userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone, token));
     }
 

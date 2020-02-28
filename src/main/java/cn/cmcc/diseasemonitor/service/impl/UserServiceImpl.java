@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import cn.cmcc.diseasemonitor.entity.User;
 import cn.cmcc.diseasemonitor.service.UserService;
 import cn.cmcc.diseasemonitor.repository.UserRepository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
