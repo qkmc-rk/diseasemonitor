@@ -76,10 +76,11 @@ public interface Constant {
     /**
      * 登录时需要的参数
      */
-    public static final Integer NO_USER = -3;
-    public static final Integer ERROR_PWD = -2;
-    public static final Integer NO_PERMISSION = -1;
-    public static final Integer UNKNOWN_ERROR = -100;
-    public static final Integer VERIFYCODE_ERROR = -101;
-    public static final Integer VERIFYCODE_NONE = -102;
+    Integer NO_USER = -3;
+    Integer ERROR_PWD = -2;
+    Integer NO_PERMISSION = -1;
+    Integer UNKNOWN_ERROR = -100;
+    Integer VERIFYCODE_ERROR = -101;
+    Integer VERIFYCODE_NONE = -102;
+    Integer PHONE_WRONG = -103;
 }

@@ -30,31 +30,17 @@ public class AuthController {
             , @RequestParam(required = false) String verifyCode
             , HttpServletRequest request){
         String ip = IpUtils.getIpAddr(request);
-        System.out.println("IP地址：" + ip);
         //校验密码
         Integer rs = userService.login(username, password, verifyCode, ip);
-        if (null == rs){
-            rs = Constant.UNKNOWN_ERROR;
-        }
-        if (rs > 0){
-            //登录成功
-            String token = RedisUtil.getInstance().readDataFromRedis("token" + rs.intValue());
-            return ControllerUtil.getSuccessResultBySelf(token);
-        }else if (rs == Constant.UNKNOWN_ERROR){
-            return ControllerUtil.getFalseResultMsgBySelf("未知错误");
-        }else if (rs == Constant.NO_USER){
-            return ControllerUtil.getFalseResultMsgBySelf("没有找到该用户");
-        }else if (rs == Constant.ERROR_PWD){
-            return ControllerUtil.getFalseResultMsgBySelf("密码错误");
-        }else if (rs == Constant.NO_PERMISSION){
-            return ControllerUtil.getFalseResultMsgBySelf("权限错误");
-        }else if (rs == Constant.VERIFYCODE_ERROR){
-            return ControllerUtil.getFalseResultMsgBySelf("验证码错误");
-        }else if (rs == Constant.VERIFYCODE_NONE){
-            return ControllerUtil.getFalseResultMsgBySelf("未获取验证码，为空");
-        }else{
-            return ControllerUtil.getFalseResultMsgBySelf("权限错误2");
-        }
+        return loginResult(rs);
+    }
+
+    @PostMapping("/phone/token")
+    @ApiOperation(value = "手机号码登录接口", notes = "传入手机号和手机验证码")
+    public ResponseEntity loginWithPhone(String phone, String phoneCode
+            , HttpServletRequest request){
+        Integer rs = userService.loginWithPhone(phone, phoneCode, request);
+        return loginResult(rs);
     }
 
     @GetMapping("/verifycode/need")
@@ -83,11 +69,55 @@ public class AuthController {
      * 传入手机号码，验证码，生成一个验证码存到redis
      * 前台通过手机接收到的验证码和密码进行修改密码
      */
-    @Deprecated
-    public ResponseEntity generateSMScode(HttpServletRequest request
-            , String verifyCode
-            , String phone){
-        //String phoneNumber = userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone);
-        return null;
+    @GetMapping("/phonecode")
+    @ApiOperation(value = "获取手机验证码")
+    public ResponseEntity generateSMScode(HttpServletRequest request,
+                                          @RequestParam(required = false) String verifyCode,
+                                          String phone,
+                                          @RequestHeader(required = false) String token){
+        return ControllerUtil.getDataResult(userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone, token));
+    }
+
+    @PostMapping("/password")
+    @ApiOperation(value = "修改密码,需要手机号, 验证码, 新的密码")
+    public ResponseEntity changePwd(@RequestParam String phoneCode
+            , @RequestParam String newPwd){
+        return ControllerUtil.getDataResult(userService.changePwd(phoneCode, newPwd));
+    }
+
+    @GetMapping("/token/expire")
+    public ResponseEntity tokenExpire(@RequestHeader String token){
+        String tokenUserId = RedisUtil.getInstance().readDataFromRedis(token);
+        return ControllerUtil.getTrueOrFalseResult(!(null == tokenUserId));
+    }
+
+    /**
+     * 登录结果处理
+     * @param rs
+     * @return
+     */
+    private ResponseEntity loginResult(Integer rs){
+        if (null == rs){
+            rs = Constant.UNKNOWN_ERROR;
+        }
+        if (rs > 0){
+            //登录成功
+            String token = RedisUtil.getInstance().readDataFromRedis("token" + rs.intValue());
+            return ControllerUtil.getSuccessResultBySelf(token);
+        }else if (rs == Constant.UNKNOWN_ERROR){
+            return ControllerUtil.getFalseResultMsgBySelf("未知错误");
+        }else if (rs == Constant.NO_USER){
+            return ControllerUtil.getFalseResultMsgBySelf("没有找到该用户");
+        }else if (rs == Constant.ERROR_PWD){
+            return ControllerUtil.getFalseResultMsgBySelf("密码错误");
+        }else if (rs == Constant.NO_PERMISSION){
+            return ControllerUtil.getFalseResultMsgBySelf("权限错误");
+        }else if (rs == Constant.VERIFYCODE_ERROR){
+            return ControllerUtil.getFalseResultMsgBySelf("验证码错误");
+        }else if (rs == Constant.VERIFYCODE_NONE){
+            return ControllerUtil.getFalseResultMsgBySelf("未获取验证码，为空");
+        }else{
+            return ControllerUtil.getFalseResultMsgBySelf("权限错误2");
+        }
     }
 }

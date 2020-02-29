@@ -77,7 +77,7 @@ public interface UserService {
      * @param phone :
      * @return: java.util.Optional<java.lang.Integer>
      */
-    Optional<Integer> updatePhone(String token, String phone);
+    Optional<Integer> updatePhone(String token, String phone, String phoneCode);
 
     /**
      * 返回当前Ip登录是否需要验证码
@@ -94,5 +94,21 @@ public interface UserService {
      * @param phone
      * @return
      */
-    String generateSMScode(String ipAddr, String verifyCode, String phone);
+    Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone, String token);
+
+    /**
+     * 修改密码
+     * @param phoneCode
+     * @param newPwd
+     * @return
+     */
+    Map<String, String> changePwd(String phoneCode, String newPwd);
+
+    /**
+     * 传手机号码和手机验证码进行登录
+     * @param phone
+     * @param phoneCode
+     * @return
+     */
+    Integer loginWithPhone(String phone, String phoneCode, HttpServletRequest request);
 }

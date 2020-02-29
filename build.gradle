@@ -39,6 +39,7 @@ dependencies {
 	//swagger与swagger-ui依赖引入.
 	implementation 'io.springfox:springfox-swagger2:2.7.0'
 	implementation 'io.springfox:springfox-swagger-ui:2.7.0'
+	implementation 'com.alibaba:fastjson:1.2.60'
 
 	implementation 'com.qiniu:qiniu-java-sdk:7.2.11'
 	compileOnly 'org.projectlombok:lombok'

@@ -36,7 +36,6 @@ public class PicServiceImpl implements PicService {
         pic.setUrl(picUrl);
         return resp.save(pic);
     }
-
     @Override
     public Pic savePdf(MultipartFile multipartFile) {
         String key = MD5Util.trueMd5(new Long(new Date().getTime()).toString()) + ".pdf";

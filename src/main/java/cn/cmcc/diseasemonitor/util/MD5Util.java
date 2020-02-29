@@ -86,7 +86,7 @@ public class MD5Util {
         int nums[] = {0,1,2,3,4,5,6,7,8,9};
         StringBuilder result = new StringBuilder();
         for (count=0; count<digit; count++){
-            int pos = (int)Math.random()*10;
+            int pos = (int)(Math.random()*10);
             result.append(nums[pos]);
         }
         return result.toString();

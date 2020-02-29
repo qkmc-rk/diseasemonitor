@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * redis操作的工具类
+ * @Author Mrruan
  */
 @Component
 public class RedisUtil {
@@ -30,7 +31,6 @@ public class RedisUtil {
     }
 
     public void setDataToRedis(String key, String value, Integer min) {
-        System.out.println("嘿嘿： " + stringRedisTemplate);
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         valueOperations.set(key, value, min, TimeUnit.MINUTES);
     }
