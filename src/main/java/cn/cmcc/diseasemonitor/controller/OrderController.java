@@ -1,5 +1,6 @@
 package cn.cmcc.diseasemonitor.controller;
 
+import cn.cmcc.diseasemonitor.entity.Commodity;
 import cn.cmcc.diseasemonitor.service.OrderService;
 import cn.cmcc.diseasemonitor.util.ResponseEntity;
 import io.swagger.annotations.ApiOperation;

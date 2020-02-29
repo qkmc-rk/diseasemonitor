@@ -20,30 +20,31 @@ public class FileController {
 
     @GetMapping("/pic/{picId}")
     @ApiOperation(value = "没有权限要求，通过id获取图片地址")
-    public ResponseEntity getPicInfo(@PathVariable Integer picId){
-        return  ControllerUtil.getDataResult(picService.findById(picId));
+    public ResponseEntity getPicInfo(@PathVariable Integer picId) {
+        return ControllerUtil.getDataResult(picService.findById(picId));
     }
 
     @GetMapping("/pdf/{pdfId}")
     @ApiOperation(value = "没有权限要求，通过id获取pdf地址")
-    public ResponseEntity getPdfInfo(@PathVariable Integer pdfId){
-        return  ControllerUtil.getDataResult(picService.findById(pdfId));
+    public ResponseEntity getPdfInfo(@PathVariable Integer pdfId) {
+        return ControllerUtil.getDataResult(picService.findById(pdfId));
     }
 
     /**
      * 图片上传 需要权限验证,token要放到header中
+     *
      * @param multipartFile
      * @return 上传后的pic记录
      */
     @PostMapping("/image")
     @ApiOperation(value = "图片上传接口")
-    public ResponseEntity uploadPicture(MultipartFile multipartFile){
-        return ControllerUtil.getDataResult(picService.savePic(multipartFile));
+    public ResponseEntity uploadPicture(@RequestHeader("token") String token, MultipartFile multipartFile) {
+        return ControllerUtil.getDataResult(picService.savePic(token, multipartFile));
     }
 
     @PostMapping("/pdf")
     @ApiOperation(value = "pdf上传接口", notes = "pdf处理逻辑暂时与image处理方式相同")
-    public ResponseEntity uploadPdf(MultipartFile multipartFile){
-        return ControllerUtil.getDataResult(picService.savePdf(multipartFile));
+    public ResponseEntity uploadPdf(@RequestHeader("token") String token, MultipartFile multipartFile) {
+        return ControllerUtil.getDataResult(picService.savePdf(token, multipartFile));
     }
 }

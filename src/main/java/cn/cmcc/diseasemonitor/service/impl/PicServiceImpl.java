@@ -1,7 +1,9 @@
 package cn.cmcc.diseasemonitor.service.impl;
 
+import cn.cmcc.diseasemonitor.service.UserService;
 import cn.cmcc.diseasemonitor.util.MD5Util;
 import cn.cmcc.diseasemonitor.util.QiNiuFileUtil;
+import cn.cmcc.diseasemonitor.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.cmcc.diseasemonitor.entity.Pic;
@@ -21,6 +23,9 @@ public class PicServiceImpl implements PicService {
     @Autowired
     private PicRepository resp;
 
+    @Autowired
+    UserService userService;
+
     @Override
     public Pic findById(Integer picId) {
         Optional<Pic> pic = resp.findById(picId);
@@ -28,23 +33,31 @@ public class PicServiceImpl implements PicService {
     }
 
     @Override
-    public Pic savePic(MultipartFile multipartFile) {
-        String picUrl = QiNiuFileUtil.uploadImageToQiNiu(multipartFile);
-        Pic pic = new Pic();
-        pic.setCreateTime(new Date().getTime());
-        pic.setUpdateTime(new Date().getTime());
-        pic.setUrl(picUrl);
-        return resp.save(pic);
+    public Pic savePic(String token, MultipartFile multipartFile) {
+        return userService.findUserIdByToken(token).map((k) -> {
+            String picUrl = QiNiuFileUtil.uploadImageToQiNiu(multipartFile);
+            Pic pic = new Pic();
+            pic.setCreateTime(TimeUtil.getTime());
+            pic.setUpdateTime(TimeUtil.getTime());
+            pic.setUrl(picUrl);
+            pic.setUploadUserType("1");
+            pic.setUploadUser(k);
+            return resp.save(pic);
+        }).orElse(null);
     }
     @Override
-    public Pic savePdf(MultipartFile multipartFile) {
+    public Pic savePdf(String token, MultipartFile multipartFile) {
         String key = MD5Util.trueMd5(new Long(new Date().getTime()).toString()) + ".pdf";
+        Optional<Integer> userId = userService.findUserIdByToken(token);
+        if (!userId.isPresent()) return null;
         try {
             String pdfUrl = QiNiuFileUtil.uploadFileToQiNiu(multipartFile.getInputStream(), key);
             Pic pic = new Pic();
-            pic.setCreateTime(new Date().getTime());
-            pic.setUpdateTime(new Date().getTime());
+            pic.setCreateTime(TimeUtil.getTime());
+            pic.setUpdateTime(TimeUtil.getTime());
             pic.setUrl(pdfUrl);
+            pic.setUrl("1");
+            pic.setUploadUser(userId.get());
             return resp.save(pic);
         } catch (IOException e) {
             e.printStackTrace();

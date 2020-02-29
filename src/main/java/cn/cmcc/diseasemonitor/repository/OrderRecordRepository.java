@@ -11,5 +11,7 @@ import java.util.Map;
 
 @Repository
 public interface OrderRecordRepository extends JpaRepository<OrderRecord, Integer> {
-    List<OrderRecord> findAllByOrderId(Integer id);
+    @Query(value = "select time, type  from order_record where order_id = ?1",
+            nativeQuery = true)
+    List<Map<String, Object>> findAllByOrderId(Integer id);
 }

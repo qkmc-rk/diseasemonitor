@@ -126,7 +126,7 @@ public class Order {
 	 * default value: null
 	 */
 	@Column(name = "report", nullable = true)
-	private String report;
+	private Integer report;
 
 	/**
 	 * 订单编号
