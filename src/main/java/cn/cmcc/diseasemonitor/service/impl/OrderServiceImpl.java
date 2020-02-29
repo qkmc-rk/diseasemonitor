@@ -3,21 +3,15 @@ package cn.cmcc.diseasemonitor.service.impl;
 import cn.cmcc.diseasemonitor.entity.*;
 import cn.cmcc.diseasemonitor.entity.Order;
 import cn.cmcc.diseasemonitor.service.*;
-import cn.cmcc.diseasemonitor.util.constant.LogisticsStatusType;
-import lombok.extern.slf4j.Slf4j;
+import cn.cmcc.diseasemonitor.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import cn.cmcc.diseasemonitor.repository.OrderRepository;
-import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
 import java.util.*;
 
 @Service
@@ -41,6 +35,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     PicService picService;
 
+    @Autowired
+    ReportService reportService;
 
     @Override
     public Page<Map<String, Object>> findByConditions(String status, String orderSn, String logisticsSn,
@@ -90,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderRecord orderRecord = new OrderRecord();
                 orderRecord.setType("4");
                 orderRecord.setOrderId(order.getId());
-                orderRecord.setTime(System.currentTimeMillis());
+                orderRecord.setTime(TimeUtil.getTime());
                 orderRecordService.save(orderRecord);
                 return 1;
             }
@@ -119,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderRecord orderRecord = new OrderRecord();
                 orderRecord.setType("5");
                 orderRecord.setOrderId(order.getId());
-                orderRecord.setTime(System.currentTimeMillis());
+                orderRecord.setTime(TimeUtil.getTime());
                 orderRecordService.save(orderRecord);
                 return 1;
             }
@@ -148,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderRecord orderRecord = new OrderRecord();
                 orderRecord.setType("0");
                 orderRecord.setOrderId(order.getId());
-                orderRecord.setTime(System.currentTimeMillis());
+                orderRecord.setTime(TimeUtil.getTime());
                 orderRecordService.save(orderRecord);
                 return 1;
             }
@@ -176,7 +172,10 @@ public class OrderServiceImpl implements OrderService {
             if (labId != null && labId.equals(laboratoryId.get())) {
                 // 获取子订单列表
                 map.put("commodities", orderSonService.findAllByOrderId((Integer) v.get("id")));
+                // 订单状态记录
                 map.put("statuses", orderRecordService.findAllByOrderId((Integer) v.get("id")));
+                // 订单报告 url
+                map.put("reports", reportService.findAllReportUrlByOrderId((Integer) v.get("id")));
                 //获取pic id数组字符串
                 String ids = (String) v.get("sample_ids");
 
@@ -195,7 +194,6 @@ public class OrderServiceImpl implements OrderService {
                     map.put("images", null);
                 }
                 // 删除多余字段
-                baseMap.remove("id");
                 baseMap.remove("laboratory_id");
                 map.put("info", baseMap);
             }
@@ -204,6 +202,11 @@ public class OrderServiceImpl implements OrderService {
             return Optional.empty();
         }
         return Optional.ofNullable(map);
+    }
+
+    @Override
+    public Optional<Order> findById(Integer id) {
+        return resp.findById(id);
     }
 
 

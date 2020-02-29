@@ -7,19 +7,21 @@ import cn.cmcc.diseasemonitor.service.OrderRecordService;
 import cn.cmcc.diseasemonitor.repository.OrderRecordRepository;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderRecordServiceImpl implements OrderRecordService {
-    @Autowired
-    private OrderRecordRepository resp;
 
-    @Override
-    public void save(OrderRecord orderRecord) {
+@Autowired
+private OrderRecordRepository resp;
+
+@Override
+public void save(OrderRecord orderRecord) {
         resp.save(orderRecord);
-    }
+        }
 
-    @Override
-    public List<OrderRecord> findAllByOrderId(Integer id) {
+@Override
+public List<Map<String,Object>> findAllByOrderId(Integer id) {
         return resp.findAllByOrderId(id);
-    }
-}
+        }
+        }

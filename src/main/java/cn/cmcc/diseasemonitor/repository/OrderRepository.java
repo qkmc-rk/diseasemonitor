@@ -18,9 +18,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
 
     @Query(value = "SELECT `mobile_user`.`wechat`,`mobile_user`.`nickname`,`order`.`sample_ids`," +
             "`mobile_user`.`phone`,`order`.`order_sn`,`order`.`id`,`order`.payable,`order`.`status`," +
-            "`mobile_user`.`company`,`mobile_user`.province,mobile_user.city,mobile_user.district," +
-            "mobile_user.address,mobile_user.`name`,`order`.report,`order`.`laboratory_id`,`order`.`pay_type` " +
-            "FROM `order` JOIN mobile_user on `order`.order_sn = ?1 AND `order`.buyer_id = mobile_user.id",
+            "`mobile_user`.`company`,`mobile_user`.province,`mobile_user`.city,`mobile_user`.district," +
+            "`mobile_user`.address,`mobile_user`.`name`,`order`.instruction,`order`.`laboratory_id`," +
+            "`order`.`pay_type`, `order`.logistics_num AS logistics_sn " +
+            "FROM `order` JOIN `mobile_user` on `order`.order_sn = ?1 AND `order`.buyer_id = `mobile_user`.id",
             nativeQuery = true)
     Optional<Map<String, Object>> findOrderInfoByOrderSn(String sn);
 

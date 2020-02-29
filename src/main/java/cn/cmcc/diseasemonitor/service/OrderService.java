@@ -1,6 +1,7 @@
 package cn.cmcc.diseasemonitor.service;
 
 
+import cn.cmcc.diseasemonitor.entity.Order;
 import org.springframework.data.domain.Page;
 
 import java.util.Map;
@@ -54,4 +55,6 @@ public interface OrderService {
      * @return: java.util.Optional
      */
     Optional<Map<String, Object>> findOrderInfoByOrderSn(String sn, String token);
+
+    Optional<Order> findById(Integer id);
 }

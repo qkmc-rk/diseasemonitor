@@ -21,3 +21,6 @@ diseasemonitor
 
 # 2020 - 02 -25
 - mrruan: 增加快递查询接口、修改密码接口、验证码不区分大小写、修复部分存在的BUGs.
+# 2020 - 02 - 29
+- Nadev： /order/detail 接口增加instruction，reports信息返回
+- Nadev： 新增 /report/del /report/new /repertory/new /commondity/list接口

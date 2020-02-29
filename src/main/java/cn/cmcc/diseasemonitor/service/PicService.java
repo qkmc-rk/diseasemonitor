@@ -5,7 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public interface PicService {
 
@@ -23,7 +22,7 @@ public interface PicService {
      * @param multipartFile
      * @return
      */
-    Pic savePic(MultipartFile multipartFile);
+    Pic savePic(String token, MultipartFile multipartFile);
 
     /**
      * 上传pdf
@@ -31,7 +30,7 @@ public interface PicService {
      * @param multipartFile
      * @return
      */
-    Pic savePdf(MultipartFile multipartFile);
+    Pic savePdf(String token, MultipartFile multipartFile);
 
     List<String> findPicUrlListByIdIn(Collection collection);
 }
