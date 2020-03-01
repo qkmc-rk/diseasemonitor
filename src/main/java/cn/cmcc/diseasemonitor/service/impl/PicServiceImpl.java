@@ -56,7 +56,7 @@ public class PicServiceImpl implements PicService {
             pic.setCreateTime(TimeUtil.getTime());
             pic.setUpdateTime(TimeUtil.getTime());
             pic.setUrl(pdfUrl);
-            pic.setUrl("1");
+            pic.setUploadUserType("1");
             pic.setUploadUser(userId.get());
             return resp.save(pic);
         } catch (IOException e) {

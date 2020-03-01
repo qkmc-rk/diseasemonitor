@@ -30,3 +30,4 @@ diseasemonitor
 - mrruan: 不建议使用原先的/user/username修改昵称, 建议使用新接口/user/nickname,但原接口仍可使用
 - mrruan: 返回用户的手机号码而不是实验室手机号码
 - mrruan: 增加通过url删除report接口
+- mrruan: FIX BUG 上传pdf url始终是1

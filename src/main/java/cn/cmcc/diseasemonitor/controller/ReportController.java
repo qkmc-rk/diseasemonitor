@@ -29,7 +29,7 @@ public class ReportController {
     }
 
     @DeleteMapping("/delbyUrl")
-    @ApiOperation("铜鼓url删除报告")
+    @ApiOperation("通过url删除报告")
     public ResponseEntity delByUrl(@RequestHeader("token") String token, String url) {
         return ControllerUtil.getDataResult(reportService.delByUrl(token, url));
     }
