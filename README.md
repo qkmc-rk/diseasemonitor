@@ -32,3 +32,4 @@ diseasemonitor
 - mrruan: 增加通过url删除report接口
 - mrruan: FIX BUG 上传pdf url始终是1
 - mrruan: 增加新接口: 为新手机发送短信验证码
+- mrruan: 增加两个新接口, 在administrative-division-controller下
