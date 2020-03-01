@@ -61,4 +61,15 @@ public class ReportServiceImpl implements ReportService {
         }).orElse(null);
 
     }
+
+    @Override
+    public String delByUrl(String token, String url) {
+        return userService.findUserIdByToken(token).map((v) -> {
+            return resp.findByUrl(url).map((x) -> {
+                x.setStatus(0);
+                resp.save(x);
+                return "删除成功";
+            }).orElse(null);
+        }).orElse(null);
+    }
 }

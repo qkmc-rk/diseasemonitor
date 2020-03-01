@@ -11,4 +11,5 @@ public interface ReportService {
 
     String del(String token, Integer id);
 
+    String delByUrl(String token, String url);
 }
