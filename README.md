@@ -19,8 +19,13 @@ diseasemonitor
 - mrruan: 增加跨域支持
 - mrruan: 增加错误登录三次以上需要验证码 根据IP判定
 
-# 2020 - 02 -25
+# 2020 - 02 - 25
 - mrruan: 增加快递查询接口、修改密码接口、验证码不区分大小写、修复部分存在的BUGs.
 # 2020 - 02 - 29
 - Nadev： /order/detail 接口增加instruction，reports信息返回
 - Nadev： 新增 /report/del /report/new /repertory/new /commondity/list接口
+
+# 2020 - 03 - 01
+- mrruan: 修改/user/info返回昵称
+- mrruan: 不建议使用原先的/user/username修改昵称, 建议使用新接口/user/nickname,但原接口仍可使用
+- mrruan: 返回用户的手机号码而不是实验室手机号码

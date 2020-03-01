@@ -5,6 +5,7 @@ import cn.cmcc.diseasemonitor.entity.User;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.DoubleStream;
 
 public interface UserService {
 
@@ -111,4 +112,6 @@ public interface UserService {
      * @return
      */
     Integer loginWithPhone(String phone, String phoneCode, HttpServletRequest request);
+
+    Optional<Integer> updateNickName(String token, String nickName);
 }

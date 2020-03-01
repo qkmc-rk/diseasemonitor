@@ -25,6 +25,7 @@ public class UserController {
         ).orElse(ControllerUtil.getFalseResultMsgBySelf("token无效"));
     }
 
+    @Deprecated
     @PostMapping("/username")
     @ApiOperation(value = "修改用户名", notes = "传入用户名")
     public ResponseEntity updateUserName(@RequestHeader("token") String token, @RequestParam String username) {
@@ -32,6 +33,16 @@ public class UserController {
                 ControllerUtil.getSuccessResultBySelf("修改成功")
         ).orElse(ControllerUtil.getFalseResultMsgBySelf("token无效"));
     }
+
+    @PostMapping("/nickname")
+    @ApiOperation(value = "修改用户名", notes = "传入用户名")
+    public ResponseEntity updateNickname(@RequestHeader("token") String token, @RequestParam String nickName) {
+        return userService.updateNickName(token, nickName).map((v) ->
+                ControllerUtil.getSuccessResultBySelf("修改成功")
+        ).orElse(ControllerUtil.getFalseResultMsgBySelf("token无效"));
+    }
+
+
 
     @PostMapping("/password")
     @ApiOperation(value = "修改用户密码", notes = "传入旧密码与新密码")

@@ -175,6 +175,15 @@ public class UserServiceImpl implements UserService {
             return Constant.PHONE_WRONG;
     }
 
+    @Override
+    public Optional<Integer> updateNickName(String token, String nickName) {
+        return this.findUserByToken(token).map((v) -> {
+            v.setNickname(nickName);
+            resp.save(v);
+            return Optional.of(1);
+        }).orElse(Optional.empty());
+    }
+
     /**
      * 如果登录错误次数大于等于3次就要返回需要验证码
      * @param ip
