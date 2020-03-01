@@ -31,3 +31,4 @@ diseasemonitor
 - mrruan: 返回用户的手机号码而不是实验室手机号码
 - mrruan: 增加通过url删除report接口
 - mrruan: FIX BUG 上传pdf url始终是1
+- mrruan: 增加新接口: 为新手机发送短信验证码

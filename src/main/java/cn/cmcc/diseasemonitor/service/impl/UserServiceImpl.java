@@ -104,6 +104,27 @@ public class UserServiceImpl implements UserService {
         return isNeedVerifyCode(IpUtils.getIpAddr(request));
     }
 
+    //这个ipAddr没啥用
+    @Override
+    public Map<String, String> generateSMScodeForNewPhone(String ipAddr, String phone, String token) {
+        System.out.println("generateSMScodeForNewPhone,操作者IP：" + ipAddr);
+        Map<String, String> rs = new HashMap<>();
+        String tokenUserId = RedisUtil.getInstance().readDataFromRedis(token);
+        if (tokenUserId == null){
+            rs.put("ERROR", "用户信息无效，无权限使用此操作");
+            return rs;
+        }
+        //模拟生成手机验证码
+        String code = MD5Util.randomNumsStr(4);
+        // 此处应发送验证码至用户手机
+        // 验证码有效时间30分钟
+        RedisUtil.getInstance().setDataToRedis(code, phone, 30);
+        rs.put("SUCCESS", phone);
+        rs.put("CODE",code);
+        rs.put("MSG", "你该用手机接收的验证码我直接给你:code");
+        return rs;
+    }
+
     @Override
     public Map<String, String> generateSMScode(String ipAddr,
                                                String verifyCode,

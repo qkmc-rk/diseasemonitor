@@ -98,6 +98,16 @@ public interface UserService {
     Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone, String token);
 
     /**
+     * 为新手机生成验证码，传入新手机号码，在redis中生成新手机号和验证码的相关记录
+     * 在绑定新手机的时候有用
+     * @param ipAddr
+     * @param phone
+     * @param token
+     * @return
+     */
+    Map<String, String> generateSMScodeForNewPhone(String ipAddr, String phone, String token);
+
+    /**
      * 修改密码
      * @param phoneCode
      * @param newPwd
