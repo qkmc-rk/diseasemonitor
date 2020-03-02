@@ -69,11 +69,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<Integer> updatePassword(String token, String oldPassword, String newPassword) {
-        String oldPasswordMD5 = MD5Util.trueMd5(oldPassword);
+    public Optional<Integer> updatePassword(String token, String newPassword) {
         String newPasswordMD5 = MD5Util.trueMd5(newPassword);
         return this.findUserByToken(token).map((v) -> {
-            if (oldPasswordMD5.equals(v.getPasswd())) {
+            if (null != v) {
                 v.setPasswd(newPasswordMD5);
                 resp.save(v);
                 return Optional.of(1);

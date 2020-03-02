@@ -47,9 +47,8 @@ public class UserController {
     @PostMapping("/password")
     @ApiOperation(value = "修改用户密码", notes = "传入旧密码与新密码")
     public ResponseEntity updatePassword(@RequestHeader("token") String token,
-                                         @RequestParam String oldPassword,
                                          @RequestParam String newPassword) {
-        return userService.updatePassword(token, oldPassword, newPassword).map((v) -> {
+        return userService.updatePassword(token, newPassword).map((v) -> {
             if (v == 1) return ControllerUtil.getSuccessResultBySelf("修改成功");
             else return ControllerUtil.getFalseResultMsgBySelf("原密码错误");
         }).orElse(ControllerUtil.getFalseResultMsgBySelf("token无效"));

@@ -65,11 +65,10 @@ public interface UserService {
      * 修改密码
      *
      * @param token       :
-     * @param oldPassword : 旧密码
      * @param newPassword : 新密码
      * @return: java.util.Optional<java.lang.Integer> 1 成功 -1 原密码错误 null token无效
      */
-    Optional<Integer> updatePassword(String token, String oldPassword, String newPassword);
+    Optional<Integer> updatePassword(String token, String newPassword);
 
     /**
      * 修改联系手机
