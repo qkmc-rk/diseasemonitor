@@ -106,19 +106,26 @@ public class UserServiceImpl implements UserService {
 
     //这个ipAddr没啥用
     @Override
-    public Map<String, String> generateSMScodeForNewPhone(String ipAddr, String phone, String token) {
+    public Map<String, String> generateSMScodeForNewPhone(String ipAddr, String phone) {
         System.out.println("generateSMScodeForNewPhone,操作者IP：" + ipAddr);
         Map<String, String> rs = new HashMap<>();
-        String tokenUserId = RedisUtil.getInstance().readDataFromRedis(token);
-        if (tokenUserId == null){
-            rs.put("ERROR", "用户信息无效，无权限使用此操作");
-            return rs;
-        }
         //模拟生成手机验证码
-        String code = MD5Util.randomNumsStr(4);
+        String code;
+        if (null != RedisUtil.getInstance().readDataFromRedis(ipAddr + "phoneCode")){
+            //这里应该报错，你的操作太快了，1分钟冷却时间未到。
+            rs.put("INFO", "你的操作太快了，还没到一分钟");
+            code = RedisUtil.getInstance().readDataFromRedis(ipAddr + "phoneCode");
+        } else {
+            //生成并发送到手机号码
+            code = MD5Util.randomNumsStr(4);
+            //sentToPhone(code, phone);
+        }
+
         // 此处应发送验证码至用户手机
         // 验证码有效时间30分钟
         RedisUtil.getInstance().setDataToRedis(code, phone, 30);
+        // flag 用于判断是否 发送验证码满 1 分钟了
+        RedisUtil.getInstance().setDataToRedis(ipAddr + "phoneCode", code, 1);
         rs.put("SUCCESS", phone);
         rs.put("CODE",code);
         rs.put("MSG", "你该用手机接收的验证码我直接给你:code");

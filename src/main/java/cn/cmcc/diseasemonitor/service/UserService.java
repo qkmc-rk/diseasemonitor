@@ -102,10 +102,9 @@ public interface UserService {
      * 在绑定新手机的时候有用
      * @param ipAddr
      * @param phone
-     * @param token
      * @return
      */
-    Map<String, String> generateSMScodeForNewPhone(String ipAddr, String phone, String token);
+    Map<String, String> generateSMScodeForNewPhone(String ipAddr, String phone);
 
     /**
      * 修改密码
@@ -124,4 +123,5 @@ public interface UserService {
     Integer loginWithPhone(String phone, String phoneCode, HttpServletRequest request);
 
     Optional<Integer> updateNickName(String token, String nickName);
+
 }

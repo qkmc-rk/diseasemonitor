@@ -85,9 +85,8 @@ public class AuthController {
     @GetMapping("/newphone/phonecode")
     @ApiOperation(value = "新手机号码获取手机验证码")
     public ResponseEntity generateSMScodeForNewPhone(HttpServletRequest request,
-                                          String phone,
-                                          @RequestHeader String token){
-        return ControllerUtil.getDataResult(userService.generateSMScodeForNewPhone(IpUtils.getIpAddr(request), phone, token));
+                                          String phone){
+        return ControllerUtil.getDataResult(userService.generateSMScodeForNewPhone(IpUtils.getIpAddr(request), phone));
     }
 
     @PostMapping("/password")
