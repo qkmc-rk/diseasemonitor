@@ -103,6 +103,13 @@ public class AuthController {
         return ControllerUtil.getTrueOrFalseResult(!(null == tokenUserId));
     }
 
+    @GetMapping("/phonecode/expire")
+    @ApiOperation(value = "判断手机验证码是否在redis中")
+    public ResponseEntity phoneCodeExpire(String phoneCode){
+        String phone = RedisUtil.getInstance().readDataFromRedis(phoneCode);
+        return ControllerUtil.getDataResult(phone);
+    }
+
     /**
      * 登录结果处理
      * @param rs
