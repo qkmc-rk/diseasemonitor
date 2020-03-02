@@ -299,7 +299,8 @@ public class UserServiceImpl implements UserService {
         }
         //生成token存到redis,返回登录成功
         String token = MD5Util.trueMd5(Long.toString(new Date().getTime()));
-        boolean rs = RedisUtil.redisUtil.tokenToRedis(user.getId(), token, 15);
+        // 登录有效期为120分钟 两个小时
+        boolean rs = RedisUtil.redisUtil.tokenToRedis(user.getId(), token, 120);
         if (rs) {
             // 登录成功需要清除登录次数记录
             clearWrongLoginTime(ip);
