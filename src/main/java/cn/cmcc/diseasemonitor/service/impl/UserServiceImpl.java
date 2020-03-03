@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Integer> updateUserName(String token, String username) {
         return this.findUserByToken(token).map((v) -> {
-            v.setNickname(username);
+            v.setUserName(username);
             resp.save(v);
             return Optional.of(1);
         }).orElse(Optional.empty());
@@ -279,7 +279,13 @@ public class UserServiceImpl implements UserService {
         }
         // 验证码正确 下一步删除验证码 继续登录
         RedisUtil.getInstance().setDataToRedis(ip+"verifycode","",30);
-        User user = resp.findByUserName(username);
+        //User user = resp.findByUserName(username);
+
+        /**
+         * 前端说是手机号码 + 密码登录, 而不是用户名 + 密码登录
+         */
+        User user = resp.findByPhone(username);
+
         if (null == user) {
             // 没有找到用户
             addWrongLoginTime(ip);
