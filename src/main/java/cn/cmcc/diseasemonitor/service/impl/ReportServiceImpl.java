@@ -6,6 +6,7 @@ import cn.cmcc.diseasemonitor.entity.User;
 import cn.cmcc.diseasemonitor.service.OrderService;
 import cn.cmcc.diseasemonitor.service.UserService;
 import cn.cmcc.diseasemonitor.util.TimeUtil;
+import cn.cmcc.diseasemonitor.util.constant.ImageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.cmcc.diseasemonitor.service.ReportService;
@@ -39,9 +40,26 @@ public class ReportServiceImpl implements ReportService {
             report.setUpdateTime(TimeUtil.getTime());
             report.setUploadUser(v);
             report.setUrl(url);
-            report.setType(type);
+            // 此处通过name获取文件后缀 从而得到文件类型
+            // 后续版本中移除上面传入的type
+            String[] son = url.split(".");
+            String fileType = son[son.length - 1];
+            Integer t = 0;
+            if (fileType.equals("png") ||
+                    fileType.equals("gif") ||
+                    fileType.equals("jpeg") ||
+                    fileType.equals("jpg") ||
+                    fileType.equals("bmp")){
+                t = 0;
+            } else {
+                t = 1;
+            }
+
+            report.setType(t);
             Optional<Order> orderOptional = orderService.findById(orderId);
-            if (!orderOptional.isPresent()) return null;
+            if (!orderOptional.isPresent()){
+                return null;
+            }
             report.setBuyerId(orderOptional.get().getBuyerId());
             report.setOrderId(orderId);
             report.setName(name);

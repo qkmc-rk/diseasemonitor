@@ -35,7 +35,7 @@ public class PicServiceImpl implements PicService {
     @Override
     public Pic savePic(String token, MultipartFile multipartFile) {
         return userService.findUserIdByToken(token).map((k) -> {
-            String picUrl = QiNiuFileUtil.uploadImageToQiNiu(multipartFile);
+            String picUrl = QiNiuFileUtil.uploadImageToQiNiuWithHttps(multipartFile);
             Pic pic = new Pic();
             pic.setCreateTime(TimeUtil.getTime());
             pic.setUpdateTime(TimeUtil.getTime());
@@ -51,7 +51,7 @@ public class PicServiceImpl implements PicService {
         Optional<Integer> userId = userService.findUserIdByToken(token);
         if (!userId.isPresent()) return null;
         try {
-            String pdfUrl = QiNiuFileUtil.uploadFileToQiNiu(multipartFile.getInputStream(), key);
+            String pdfUrl = QiNiuFileUtil.uploadFileToQiNiuWithHttps(multipartFile.getInputStream(), key);
             Pic pic = new Pic();
             pic.setCreateTime(TimeUtil.getTime());
             pic.setUpdateTime(TimeUtil.getTime());

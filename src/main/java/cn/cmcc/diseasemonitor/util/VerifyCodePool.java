@@ -36,8 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class VerifyCodePool {
 
-    private static final Logger logger = LoggerFactory.getLogger(VerifyCodePool.class);
-
     private VerifyCodePool(){}
 
     //验证码池
@@ -62,8 +60,5 @@ public abstract class VerifyCodePool {
         }else {
             return false;
         }
-
     }
-
-
 }
