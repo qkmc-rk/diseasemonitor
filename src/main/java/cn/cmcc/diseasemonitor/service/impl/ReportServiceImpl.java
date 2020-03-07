@@ -34,28 +34,25 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Report save(String token, String url, Integer orderId, String name, Integer type) {
+
         return userService.findUserIdByToken(token).map((v) -> {
+
+            String suffix = url.substring(url.lastIndexOf(".") + 1);
+            Integer fileType;
+            if (suffix.equals("jpg") ||
+                    suffix.equals("jpeg") || suffix.equals("png") ||
+                    suffix.equals("gif") || suffix.equals("bmp")){
+                fileType = 1;
+            } else {
+                fileType = 0;
+            }
+
             Report report = new Report();
             report.setCreateTime(TimeUtil.getTime());
             report.setUpdateTime(TimeUtil.getTime());
             report.setUploadUser(v);
             report.setUrl(url);
-            // 此处通过name获取文件后缀 从而得到文件类型
-            // 后续版本中移除上面传入的type
-            String[] son = url.split(".");
-            String fileType = son[son.length - 1];
-            Integer t = 0;
-            if (fileType.equals("png") ||
-                    fileType.equals("gif") ||
-                    fileType.equals("jpeg") ||
-                    fileType.equals("jpg") ||
-                    fileType.equals("bmp")){
-                t = 0;
-            } else {
-                t = 1;
-            }
-
-            report.setType(t);
+            report.setType(fileType);
             Optional<Order> orderOptional = orderService.findById(orderId);
             if (!orderOptional.isPresent()){
                 return null;

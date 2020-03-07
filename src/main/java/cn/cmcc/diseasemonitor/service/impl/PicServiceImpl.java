@@ -46,8 +46,11 @@ public class PicServiceImpl implements PicService {
         }).orElse(null);
     }
     @Override
-    public Pic savePdf(String token, MultipartFile multipartFile) {
-        String key = MD5Util.trueMd5(new Long(new Date().getTime()).toString()) + ".pdf";
+    public Pic saveFile(String token, MultipartFile multipartFile){
+        String fileName = multipartFile.getOriginalFilename();
+        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        System.out.println(suffix);
+        String key = MD5Util.trueMd5(new Long(new Date().getTime()).toString()) + "." + suffix;
         Optional<Integer> userId = userService.findUserIdByToken(token);
         if (!userId.isPresent()) return null;
         try {
