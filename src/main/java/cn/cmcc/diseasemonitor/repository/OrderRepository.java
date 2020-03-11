@@ -1,6 +1,7 @@
 package cn.cmcc.diseasemonitor.repository;
 
 import cn.cmcc.diseasemonitor.entity.Order;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -65,4 +66,12 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
     Page<Map<String, Object>> findByConditions(Integer labId, String status, String orderSn, String logisticsSn,
                                                Float payable, Long startTime, Long endTime,
                                                String phone, String company, Pageable pageable);
+
+    /**
+     * 找到是否进行过通知的订单信息
+     * @param labId 实验室id
+     * @param notified 是否被通知
+     * @return
+     */
+    List<Order> findAllByLaboratoryIdAndNotified(Integer labId, Boolean notified);
 }

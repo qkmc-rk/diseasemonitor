@@ -88,4 +88,6 @@ public interface Constant {
     Integer LEVEL3 = 3;
     Integer LEVEL4 = 4;
     Integer LEVEL5 = 5;
+
+    Integer SOCKET_QUERY = 1;
 }

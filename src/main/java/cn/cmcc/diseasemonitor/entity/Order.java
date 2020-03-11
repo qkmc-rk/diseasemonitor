@@ -134,4 +134,7 @@ public class Order {
 	 */
 	@Column(name = "order_sn", nullable = true)
 	private String orderSn;
+
+	@Column
+	private Boolean notified;
 }

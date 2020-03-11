@@ -60,4 +60,10 @@ public class OrderController {
         return orderService.findOrderInfoByOrderSn(orderSn, token).map(ControllerUtil::getSuccessResultBySelf).orElse(
                 ControllerUtil.getFalseResultMsgBySelf("未查询到数据"));
     }
+    @PutMapping("/{orderSn}/notified")
+    @ApiOperation(value = "把订单通知状态改变成已通知")
+    public ResponseEntity notified(@PathVariable String orderSn, @RequestHeader("token") String token){
+        return orderService.makeOrderNotified(orderSn, token);
+    }
+
 }

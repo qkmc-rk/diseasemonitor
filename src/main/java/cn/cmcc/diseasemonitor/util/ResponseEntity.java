@@ -1,15 +1,17 @@
 package cn.cmcc.diseasemonitor.util;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
-
-public class ResponseEntity<T> {
+@Data
+public class ResponseEntity<T> implements Serializable {
 
     @JsonProperty("status")
-    private Integer status;
+    private Integer status = 10000000;
     @JsonProperty("message")
-    private String message;
+    private String message = "default";
     @JsonProperty("data")
     private T data;
 
