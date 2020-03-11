@@ -9,6 +9,8 @@ import cn.cmcc.diseasemonitor.service.UserService;
 import cn.cmcc.diseasemonitor.util.TimeUtil;
 import cn.cmcc.diseasemonitor.vo.TestItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import cn.cmcc.diseasemonitor.entity.Repertory;
 import cn.cmcc.diseasemonitor.service.RepertoryService;
@@ -16,6 +18,7 @@ import cn.cmcc.diseasemonitor.repository.RepertoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RepertoryServiceImpl implements RepertoryService {
@@ -58,6 +61,24 @@ public class RepertoryServiceImpl implements RepertoryService {
     }
 
     @Override
+    public Page<Map<String, Object>> findAllOnSaleServe(String token, Integer pageNum, Integer pageSize) {
+        // 第一步找到用户
+        Integer id = userService.findUserIdByToken(token).get();
+        // 第二步找到lab
+        Integer labId = laboratoryRepository.findByUserId(id).get().getId();
+        return resp.findAllByLaboratoryIdAndRepertoryStatus(labId, "1", PageRequest.of(pageNum, pageSize));
+    }
+
+    @Override
+    public Page<Map<String, Object>> findAllOffSaleServe(String token, Integer pageNum, Integer pageSize) {
+        // 第一步找到用户
+        Integer id = userService.findUserIdByToken(token).get();
+        // 第二步找到lab
+        Integer labId = laboratoryRepository.findByUserId(id).get().getId();
+        return resp.findAllByLaboratoryIdAndRepertoryStatus(labId, "0", PageRequest.of(pageNum, pageSize));
+    }
+
+    @Override
     public TestItem findOneByRepertoryId(String token, Integer repertoryId) {
         // 暂且保留token, 以防止后面使用
         token = null;
@@ -76,6 +97,7 @@ public class RepertoryServiceImpl implements RepertoryService {
     public Repertory changeRepertoryStatus(Integer repertoryId, String s) {
         Repertory repertory = resp.findById(repertoryId).get();
         repertory.setStatus(s);
+        repertory.setUpdateTime(TimeUtil.getTime());
         return resp.save(repertory);
     }
 
