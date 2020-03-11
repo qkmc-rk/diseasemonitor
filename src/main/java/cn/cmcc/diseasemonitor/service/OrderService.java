@@ -2,8 +2,10 @@ package cn.cmcc.diseasemonitor.service;
 
 
 import cn.cmcc.diseasemonitor.entity.Order;
+import cn.cmcc.diseasemonitor.util.ResponseEntity;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -57,4 +59,15 @@ public interface OrderService {
     Optional<Map<String, Object>> findOrderInfoByOrderSn(String sn, String token);
 
     Optional<Order> findById(Integer id);
+
+
+    List<Order> findByLaboratoryAndNotified(Integer id, boolean b);
+
+    /**
+     * 使订单变成已经通知的状态
+     * @param orderSn
+     * @param token
+     * @return
+     */
+    ResponseEntity makeOrderNotified(String orderSn, String token);
 }

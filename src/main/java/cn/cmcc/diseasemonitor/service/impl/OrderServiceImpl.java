@@ -1,8 +1,10 @@
 package cn.cmcc.diseasemonitor.service.impl;
 
+import cn.cmcc.diseasemonitor.controller.ControllerUtil;
 import cn.cmcc.diseasemonitor.entity.*;
 import cn.cmcc.diseasemonitor.entity.Order;
 import cn.cmcc.diseasemonitor.service.*;
+import cn.cmcc.diseasemonitor.util.ResponseEntity;
 import cn.cmcc.diseasemonitor.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import cn.cmcc.diseasemonitor.repository.OrderRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -207,6 +210,28 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> findById(Integer id) {
         return resp.findById(id);
+    }
+
+    @Override
+    public List<Order> findByLaboratoryAndNotified(Integer id, boolean b) {
+        return resp.findAllByLaboratoryIdAndNotified(id, b);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity makeOrderNotified(String orderSn, String token) {
+        Laboratory laboratory = laboratoryService.findLaboratory(token);
+        Order order = resp.findByOrderSn(orderSn).orElse(null);
+        if (laboratory == null || order == null || !order.getLaboratoryId().equals(laboratory.getId())){
+            return ControllerUtil.getFalseResultMsgBySelf("用户与订单不匹配");
+        }
+        order.setNotified(true);
+        if (resp.saveAndFlush(order) != null){
+            return ControllerUtil.getSuccessResultBySelf(null);
+        }else {
+            return ControllerUtil.getFalseResultMsgBySelf("更新失败");
+        }
+
     }
 
 

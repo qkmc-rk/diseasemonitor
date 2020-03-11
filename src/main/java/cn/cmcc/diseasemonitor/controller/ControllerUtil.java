@@ -59,6 +59,16 @@ public class ControllerUtil {
         responseEntity.error(Constant.FAILURE_CODE, msg, null);
         return responseEntity;
     }
+    public static <T> ResponseEntity<T> getSuccessResultMsgBySelf(String msg) {
+        ResponseEntity responseEntity = new ResponseEntity<>();
+        responseEntity.success(Constant.SUCCESS_CODE, msg, null);
+        return responseEntity;
+    }
+    public static <T> ResponseEntity<T> customResult(Integer status, String msg, T data) {
+        ResponseEntity responseEntity = new ResponseEntity<>();
+        responseEntity.error(status, msg, data);
+        return responseEntity;
+    }
 
 
     public static <T> ResponseEntity<T> parData(Integer result, T data) {
@@ -74,4 +84,6 @@ public class ControllerUtil {
         }
         return responseEntity;
     }
+
+
 }

@@ -41,6 +41,9 @@ dependencies {
 	implementation 'io.springfox:springfox-swagger-ui:2.7.0'
 	implementation 'com.alibaba:fastjson:1.2.60'
 
+	// 添加websocket支持
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 	implementation 'com.qiniu:qiniu-java-sdk:7.2.11'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
