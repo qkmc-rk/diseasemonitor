@@ -89,7 +89,7 @@ public class QiNiuFileUtil {
      * @param key
      * @return
      */
-    public static String uploadToQiNiuWithHttps(InputStream inputStream,String key){
+            public static String uploadToQiNiuWithHttps(InputStream inputStream,String key){
 
         if(inputStream == null){
             logger.info("传入的图片二进制流不存在, 忽略上传过程");
@@ -233,5 +233,15 @@ public class QiNiuFileUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 上传后获得https的连接  文件上传 不区分图片 pdf
+     * @param inputStream
+     * @param key
+     * @return
+     */
+    public static String uploadFileToQiNiuWithHttps(InputStream inputStream, String key) {
+        return uploadToQiNiuWithHttps(inputStream, key);
     }
 }

@@ -5,6 +5,7 @@ import cn.cmcc.diseasemonitor.entity.User;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.DoubleStream;
 
 public interface UserService {
 
@@ -64,11 +65,10 @@ public interface UserService {
      * 修改密码
      *
      * @param token       :
-     * @param oldPassword : 旧密码
      * @param newPassword : 新密码
      * @return: java.util.Optional<java.lang.Integer> 1 成功 -1 原密码错误 null token无效
      */
-    Optional<Integer> updatePassword(String token, String oldPassword, String newPassword);
+    Optional<Integer> updatePassword(String token, String newPassword);
 
     /**
      * 修改联系手机
@@ -97,6 +97,15 @@ public interface UserService {
     Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone, String token);
 
     /**
+     * 为新手机生成验证码，传入新手机号码，在redis中生成新手机号和验证码的相关记录
+     * 在绑定新手机的时候有用
+     * @param ipAddr
+     * @param phone
+     * @return
+     */
+    Map<String, String> generateSMScodeForNewPhone(String ipAddr, String phone);
+
+    /**
      * 修改密码
      * @param phoneCode
      * @param newPwd
@@ -111,4 +120,7 @@ public interface UserService {
      * @return
      */
     Integer loginWithPhone(String phone, String phoneCode, HttpServletRequest request);
+
+    Optional<Integer> updateNickName(String token, String nickName);
+
 }

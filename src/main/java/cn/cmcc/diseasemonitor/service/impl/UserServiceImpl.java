@@ -62,18 +62,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Integer> updateUserName(String token, String username) {
         return this.findUserByToken(token).map((v) -> {
-            v.setNickname(username);
+            v.setUserName(username);
             resp.save(v);
             return Optional.of(1);
         }).orElse(Optional.empty());
     }
 
     @Override
-    public Optional<Integer> updatePassword(String token, String oldPassword, String newPassword) {
-        String oldPasswordMD5 = MD5Util.trueMd5(oldPassword);
+    public Optional<Integer> updatePassword(String token, String newPassword) {
         String newPasswordMD5 = MD5Util.trueMd5(newPassword);
         return this.findUserByToken(token).map((v) -> {
-            if (oldPasswordMD5.equals(v.getPasswd())) {
+            if (null != v) {
                 v.setPasswd(newPasswordMD5);
                 resp.save(v);
                 return Optional.of(1);
@@ -102,6 +101,34 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean needVerifyCode(HttpServletRequest request) {
         return isNeedVerifyCode(IpUtils.getIpAddr(request));
+    }
+
+    //这个ipAddr没啥用
+    @Override
+    public Map<String, String> generateSMScodeForNewPhone(String ipAddr, String phone) {
+        System.out.println("generateSMScodeForNewPhone,操作者IP：" + ipAddr);
+        Map<String, String> rs = new HashMap<>();
+        //模拟生成手机验证码
+        String code;
+        if (null != RedisUtil.getInstance().readDataFromRedis(ipAddr + "phoneCode")){
+            //这里应该报错，你的操作太快了，1分钟冷却时间未到。
+            rs.put("INFO", "你的操作太快了，还没到一分钟");
+            code = RedisUtil.getInstance().readDataFromRedis(ipAddr + "phoneCode");
+        } else {
+            //生成并发送到手机号码
+            code = MD5Util.randomNumsStr(4);
+            //sentToPhone(code, phone);
+        }
+
+        // 此处应发送验证码至用户手机
+        // 验证码有效时间30分钟
+        RedisUtil.getInstance().setDataToRedis(code, phone, 30);
+        // flag 用于判断是否 发送验证码满 1 分钟了
+        RedisUtil.getInstance().setDataToRedis(ipAddr + "phoneCode", code, 1);
+        rs.put("SUCCESS", phone);
+        rs.put("CODE",code);
+        rs.put("MSG", "你该用手机接收的验证码我直接给你:code");
+        return rs;
     }
 
     @Override
@@ -175,6 +202,15 @@ public class UserServiceImpl implements UserService {
             return Constant.PHONE_WRONG;
     }
 
+    @Override
+    public Optional<Integer> updateNickName(String token, String nickName) {
+        return this.findUserByToken(token).map((v) -> {
+            v.setNickname(nickName);
+            resp.save(v);
+            return Optional.of(1);
+        }).orElse(Optional.empty());
+    }
+
     /**
      * 如果登录错误次数大于等于3次就要返回需要验证码
      * @param ip
@@ -243,7 +279,13 @@ public class UserServiceImpl implements UserService {
         }
         // 验证码正确 下一步删除验证码 继续登录
         RedisUtil.getInstance().setDataToRedis(ip+"verifycode","",30);
-        User user = resp.findByUserName(username);
+        //User user = resp.findByUserName(username);
+
+        /**
+         * 前端说是手机号码 + 密码登录, 而不是用户名 + 密码登录
+         */
+        User user = resp.findByPhone(username);
+
         if (null == user) {
             // 没有找到用户
             addWrongLoginTime(ip);
@@ -263,7 +305,8 @@ public class UserServiceImpl implements UserService {
         }
         //生成token存到redis,返回登录成功
         String token = MD5Util.trueMd5(Long.toString(new Date().getTime()));
-        boolean rs = RedisUtil.redisUtil.tokenToRedis(user.getId(), token, 15);
+        // 登录有效期为120分钟 两个小时
+        boolean rs = RedisUtil.redisUtil.tokenToRedis(user.getId(), token, 120);
         if (rs) {
             // 登录成功需要清除登录次数记录
             clearWrongLoginTime(ip);

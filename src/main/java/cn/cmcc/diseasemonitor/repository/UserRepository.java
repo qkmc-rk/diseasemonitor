@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findByUserName(String username);
 
-    @Query(value = "select user.user_name as userName, laboratory.phone, user.create_time as createTime" +
+    @Query(value = "select user.user_name as userName, user.nickname as nickName, user.phone, user.create_time as createTime" +
             " from user left join laboratory on user.id = laboratory.user_id where user.id = ?1",
             nativeQuery = true)
     Optional<Map<String, Object>> findUserInfoAndPhone(Integer id);

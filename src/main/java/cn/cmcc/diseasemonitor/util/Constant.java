@@ -83,4 +83,9 @@ public interface Constant {
     Integer VERIFYCODE_ERROR = -101;
     Integer VERIFYCODE_NONE = -102;
     Integer PHONE_WRONG = -103;
+    Integer LEVEL1 = 1;
+    Integer LEVEL2 = 2;
+    Integer LEVEL3 = 3;
+    Integer LEVEL4 = 4;
+    Integer LEVEL5 = 5;
 }

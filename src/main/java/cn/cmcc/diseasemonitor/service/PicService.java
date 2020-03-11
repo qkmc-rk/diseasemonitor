@@ -30,7 +30,7 @@ public interface PicService {
      * @param multipartFile
      * @return
      */
-    Pic savePdf(String token, MultipartFile multipartFile);
+    Pic saveFile(String token, MultipartFile multipartFile);
 
     List<String> findPicUrlListByIdIn(Collection collection);
 }

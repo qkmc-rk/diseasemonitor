@@ -9,12 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class DiseasemonitorApplicationTests {
 
-	@Autowired
-	CollectionRepository collectionRepository;
-
-	@Test
-	void contextLoads() {
-		System.out.println(collectionRepository.findAll());
-	}
+//	@Autowired
+//	CollectionRepository collectionRepository;
+//
+//	@Test
+//	void contextLoads() {
+//		System.out.println(collectionRepository.findAll());
+//	}
 
 }

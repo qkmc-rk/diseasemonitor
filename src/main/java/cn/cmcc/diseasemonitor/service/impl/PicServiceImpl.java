@@ -35,7 +35,7 @@ public class PicServiceImpl implements PicService {
     @Override
     public Pic savePic(String token, MultipartFile multipartFile) {
         return userService.findUserIdByToken(token).map((k) -> {
-            String picUrl = QiNiuFileUtil.uploadImageToQiNiu(multipartFile);
+            String picUrl = QiNiuFileUtil.uploadImageToQiNiuWithHttps(multipartFile);
             Pic pic = new Pic();
             pic.setCreateTime(TimeUtil.getTime());
             pic.setUpdateTime(TimeUtil.getTime());
@@ -46,17 +46,20 @@ public class PicServiceImpl implements PicService {
         }).orElse(null);
     }
     @Override
-    public Pic savePdf(String token, MultipartFile multipartFile) {
-        String key = MD5Util.trueMd5(new Long(new Date().getTime()).toString()) + ".pdf";
+    public Pic saveFile(String token, MultipartFile multipartFile){
+        String fileName = multipartFile.getOriginalFilename();
+        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        System.out.println(suffix);
+        String key = MD5Util.trueMd5(new Long(new Date().getTime()).toString()) + "." + suffix;
         Optional<Integer> userId = userService.findUserIdByToken(token);
         if (!userId.isPresent()) return null;
         try {
-            String pdfUrl = QiNiuFileUtil.uploadFileToQiNiu(multipartFile.getInputStream(), key);
+            String pdfUrl = QiNiuFileUtil.uploadFileToQiNiuWithHttps(multipartFile.getInputStream(), key);
             Pic pic = new Pic();
             pic.setCreateTime(TimeUtil.getTime());
             pic.setUpdateTime(TimeUtil.getTime());
             pic.setUrl(pdfUrl);
-            pic.setUrl("1");
+            pic.setUploadUserType("1");
             pic.setUploadUser(userId.get());
             return resp.save(pic);
         } catch (IOException e) {

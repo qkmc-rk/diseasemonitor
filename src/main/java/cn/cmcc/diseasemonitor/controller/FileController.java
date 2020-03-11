@@ -44,7 +44,15 @@ public class FileController {
 
     @PostMapping("/pdf")
     @ApiOperation(value = "pdf上传接口", notes = "pdf处理逻辑暂时与image处理方式相同")
+    @Deprecated
     public ResponseEntity uploadPdf(@RequestHeader("token") String token, MultipartFile multipartFile) {
-        return ControllerUtil.getDataResult(picService.savePdf(token, multipartFile));
+        return ControllerUtil.getDataResult(picService.saveFile(token, multipartFile));
+    }
+
+    @PostMapping("/file")
+    @ApiOperation(value = "pdf上传接口", notes = "pdf处理逻辑暂时与image处理方式相同")
+    @Deprecated
+    public ResponseEntity uploadFile(@RequestHeader("token") String token, MultipartFile multipartFile) {
+        return ControllerUtil.getDataResult(picService.saveFile(token, multipartFile));
     }
 }
