@@ -19,6 +19,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -47,7 +48,7 @@ public class WebSocketServer {
         webSocketServers.add(this);
         this.token = token;
         log.info("websocket:新的连接加入! ID:{}", session.getId());
-        sendMessage(ControllerUtil.getSuccessResultBySelf("连接成功"));
+        sendMessage(ControllerUtil.getSuccessResultBySelf(new ArrayList()));
     }
 
     @OnClose
