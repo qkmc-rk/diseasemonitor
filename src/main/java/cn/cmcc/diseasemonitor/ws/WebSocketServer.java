@@ -8,7 +8,6 @@ import cn.cmcc.diseasemonitor.service.LaboratoryService;
 import cn.cmcc.diseasemonitor.service.OrderService;
 import cn.cmcc.diseasemonitor.service.UserService;
 import com.alibaba.fastjson.JSON;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,6 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -33,6 +31,8 @@ public class WebSocketServer {
     private static LaboratoryService laboratoryService;
 
     private static OrderService orderService;
+
+    private static Integer milions = 5000;
 
     // 存放客户端 websocket 连接信息
     private static CopyOnWriteArraySet<WebSocketServer> webSocketServers = new CopyOnWriteArraySet<>();
