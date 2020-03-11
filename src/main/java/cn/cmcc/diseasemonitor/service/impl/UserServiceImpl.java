@@ -183,6 +183,7 @@ public class UserServiceImpl implements UserService {
         //此处理论上已经找到用户存在了，不需要try catch了吧,,嘿嘿
         User user = resp.findByPhone(phone);
         user.setPasswd(MD5Util.trueMd5(newPwd));
+        resp.save(user);
         rs.put("SUCCESS","找回密码成功");
         return rs;
     }
