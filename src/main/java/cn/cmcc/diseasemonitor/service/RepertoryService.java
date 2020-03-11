@@ -2,8 +2,10 @@ package cn.cmcc.diseasemonitor.service;
 
 import cn.cmcc.diseasemonitor.entity.Repertory;
 import cn.cmcc.diseasemonitor.vo.TestItem;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RepertoryService {
     /**
@@ -15,6 +17,12 @@ public interface RepertoryService {
     List<TestItem> findAllOnSaleServe(String token);
 
     List<TestItem> findAllOffSaleServe(String token);
+
+
+    Page<Map<String, Object>> findAllOnSaleServe(String token, Integer pageNum, Integer pageSize);
+
+    Page<Map<String, Object>> findAllOffSaleServe(String token, Integer pageNum, Integer pageSize);
+
 
     /**
      * 通过仓库id查找这个详细信息
