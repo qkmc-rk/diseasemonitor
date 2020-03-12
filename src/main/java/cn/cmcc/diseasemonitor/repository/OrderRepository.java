@@ -29,14 +29,14 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
     Optional<Order> findByOrderSn(String sn);
 
     @Query(value = "SELECT " +
-            "`order`.order_sn, " +
-            "mobile_user.phone, " +
-            "`order`.logistics_num AS logistics_sn, " +
-            "`order`.payable, " +
-            "mobile_user.company, " +
-            "`order`.create_time, " +
-            "`order`.`status`  " +
-            "FROM " +
+            "`order`.order_sn as order_sn, " +
+            "mobile_user.phone as phone, " +
+            "`order`.logistics_num as logistics_sn, " +
+            "`order`.payable as payable, " +
+            "mobile_user.company as company, " +
+            "`order`.create_time as create_time, " +
+            "`order`.`status` as status" +
+            " FROM " +
             "`order` " +
             "JOIN mobile_user ON `order`.buyer_id = mobile_user.id  " +
             "WHERE " +

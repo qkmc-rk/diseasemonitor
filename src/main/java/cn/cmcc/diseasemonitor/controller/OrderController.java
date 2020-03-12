@@ -3,6 +3,7 @@ package cn.cmcc.diseasemonitor.controller;
 import cn.cmcc.diseasemonitor.entity.Commodity;
 import cn.cmcc.diseasemonitor.service.OrderService;
 import cn.cmcc.diseasemonitor.util.ResponseEntity;
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class OrderController {
                                        Float payable, Long startTime, Long endTime,
                                        String phone, String company, @RequestParam Integer pageNum,
                                        @RequestParam Integer pageSize, @RequestHeader("token") String token) {
+        System.out.println(JSON.toJSONString(orderService.findByConditions(status, orderSn, logisticsSn, payable, startTime,
+                endTime, phone, company, pageNum, pageSize, token)));
+        System.out.println("嘿嘿↑");
         return ControllerUtil.getDataResult(orderService.findByConditions(status, orderSn, logisticsSn, payable, startTime,
                 endTime, phone, company, pageNum, pageSize, token));
     }

@@ -1,5 +1,6 @@
 package cn.cmcc.diseasemonitor.service.impl;
 
+import cn.cmcc.diseasemonitor.controller.ControllerUtil;
 import cn.cmcc.diseasemonitor.repository.LaboratoryRepository;
 import cn.cmcc.diseasemonitor.util.Constant;
 import cn.cmcc.diseasemonitor.util.IpUtils;
@@ -136,9 +137,16 @@ public class UserServiceImpl implements UserService {
                                                String verifyCode,
                                                String phone,
                                                String token) {
+        Map<String, String> rs = new HashMap<>();
+        if (token == null && verifyCode == null){
+            rs.put("ERROR", "验证码和token不能同时为空");
+            return rs;
+        }
+        if (token == null){
+            token = "";
+        }
         String tokenUserId = RedisUtil.getInstance().readDataFromRedis(token);
         // 先验证图片验证码, 防止恶意发送手机验证码
-        Map<String, String> rs = new HashMap<>();
         String verify = RedisUtil.getInstance().readDataFromRedis(ipAddr + "verifycode");
         if (null == tokenUserId){
             if (verifyCode == null || !verifyCode.toLowerCase().equals(verify.toLowerCase())){
@@ -198,7 +206,7 @@ public class UserServiceImpl implements UserService {
         //校验手机验证码
         String phoneFromRedis = RedisUtil.getInstance().readDataFromRedis(phoneCode);
         if (phoneFromRedis != null && phone != null && phoneFromRedis.equals(phone))
-            return loginCommon(user.getUserName(), user.getPasswd(), null, ip, true);
+            return loginCommon(user.getPhone(), user.getPasswd(), null, ip, true);
         else
             return Constant.PHONE_WRONG;
     }
@@ -283,7 +291,8 @@ public class UserServiceImpl implements UserService {
         //User user = resp.findByUserName(username);
 
         /**
-         * 前端说是手机号码 + 密码登录, 而不是用户名 + 密码登录
+         * 1. 前端说是手机号码 + 密码登录, 而不是用户名 + 密码登录
+         * 2. 对 , 但是这里上面传进来的是username,手机号上一个方法已经验证过了, 是存在的
          */
         User user = resp.findByPhone(username);
 

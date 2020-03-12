@@ -145,8 +145,8 @@ public class RepertoryServiceImpl implements RepertoryService {
     private TestItem getTestItemByRepertory(Repertory r) {
         Integer diseaseId = r.getDiseaseId();
         Integer commodityId = r.getCommodityId();
-        DiseaseType diseaseType = diseaseTypeRepository.findById(diseaseId).get();
-        Commodity commodity = commodityRepository.findById(commodityId).get();
+        DiseaseType diseaseType = diseaseTypeRepository.findById(diseaseId).orElse(null);
+        Commodity commodity = commodityRepository.findById(commodityId).orElse(null);
         TestItem testItem = new TestItem();
         testItem.setRepertory(r);
         testItem.setCommodity(commodity);

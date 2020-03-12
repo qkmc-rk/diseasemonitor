@@ -30,7 +30,8 @@ public interface RepertoryRepository extends JpaRepository<Repertory, Integer> {
      * @return
      */
     @Query(value = "SELECT " +
-            "repertory.id, " +
+            "repertory.id AS repId, " +
+            "commodity.id AS id, " +
             "commodity.`name` AS commodityName, " +
             "disease_type.`name` AS disaseName, " +
             "repertory.price, " +
