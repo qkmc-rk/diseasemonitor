@@ -38,7 +38,7 @@ public class NoticeController {
         return noticeService.getNoticeByPage(token, pageNum, pageSize);
     }
 
-    @PutMapping("")
+    @PostMapping("")
     @ApiOperation(value = "批量读取一些消息,只需要传入对象中包含id即可")
     public ResponseEntity readSomeNotice(@RequestHeader String token,@RequestBody List<Notice> notices){
         return noticeService.readSomeNotice(token, notices);
