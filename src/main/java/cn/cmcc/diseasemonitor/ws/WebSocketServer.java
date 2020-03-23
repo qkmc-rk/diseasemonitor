@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * websocket已废弃
+ */
+@Deprecated
 @Slf4j
 @ServerEndpoint("/websocket/{token}")
 @Component
