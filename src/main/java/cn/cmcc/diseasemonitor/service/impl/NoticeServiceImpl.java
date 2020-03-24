@@ -68,6 +68,7 @@ public class NoticeServiceImpl implements NoticeService {
         notices1.forEach(item -> item.setIfNew(true));
         try {
             noticeRepository.saveAll(notices1);
+            noticeRepository.flush();
             return ControllerUtil.getSuccessResultMsgBySelf("已读成功!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,6 +84,8 @@ public class NoticeServiceImpl implements NoticeService {
         notices1.forEach(item -> item.setStatus(false));
         try {
             noticeRepository.saveAll(notices1);
+            // jpa也太神奇了吧？总是刷不进数据库
+            noticeRepository.flush();
             return ControllerUtil.getSuccessResultMsgBySelf("删除成功!");
         } catch (Exception e) {
             e.printStackTrace();

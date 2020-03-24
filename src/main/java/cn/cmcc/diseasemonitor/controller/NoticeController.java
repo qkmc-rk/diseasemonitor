@@ -38,6 +38,12 @@ public class NoticeController {
         return noticeService.getNoticeByPage(token, pageNum, pageSize);
     }
 
+    /**
+     *  same url same arguments with different http method with throw exception
+     * @param token
+     * @param notices
+     * @return
+     */
     @PostMapping("")
     @ApiOperation(value = "批量读取一些消息,只需要传入对象中包含id即可")
     public ResponseEntity readSomeNotice(@RequestHeader String token,@RequestBody List<Notice> notices){
