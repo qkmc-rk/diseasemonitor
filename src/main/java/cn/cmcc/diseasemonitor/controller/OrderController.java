@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/order")
 @CrossOrigin
+@RequestMapping("/order")
 public class OrderController {
 
     @Autowired

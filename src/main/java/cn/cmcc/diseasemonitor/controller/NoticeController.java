@@ -17,8 +17,8 @@ import java.util.List;
  *
  */
 @RestController
-@RequestMapping("/notice")
 @CrossOrigin
+@RequestMapping("/notice")
 public class NoticeController {
 
     @Autowired
@@ -44,13 +44,13 @@ public class NoticeController {
      * @param notices
      * @return
      */
-    @PostMapping("")
+    @PostMapping("/read")
     @ApiOperation(value = "批量读取一些消息,只需要传入对象中包含id即可")
     public ResponseEntity readSomeNotice(@RequestHeader String token,@RequestBody List<Notice> notices){
         return noticeService.readSomeNotice(token, notices);
     }
 
-    @DeleteMapping("")
+    @DeleteMapping("/delete")
     @ApiOperation(value = "批量删除一些消息,只需要传入对象中包含id即可")
     public ResponseEntity deleteSomeNotice(@RequestHeader String token, @RequestBody List<Notice> notices){
         return noticeService.deleteSomeNotice(token, notices);
