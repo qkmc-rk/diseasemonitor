@@ -7,6 +7,7 @@ import cn.cmcc.diseasemonitor.service.NoticeService;
 import cn.cmcc.diseasemonitor.util.RedisUtil;
 import cn.cmcc.diseasemonitor.util.ResponseEntity;
 import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class NoticeServiceImpl implements NoticeService {
 
@@ -66,9 +68,11 @@ public class NoticeServiceImpl implements NoticeService {
         // 省略权限鉴定
         List<Notice> notices1 = findAllById(notices);
         notices1.forEach(item -> item.setIfNew(true));
+        log.info("嘿嘿准备存到数据库: {}", JSON.toJSONString(notices1));
         try {
-            noticeRepository.saveAll(notices1);
+            List<Notice> notices2 = noticeRepository.saveAll(notices1);
             noticeRepository.flush();
+            log.info("存放成功：{}", JSON.toJSONString(notices2));
             return ControllerUtil.getSuccessResultMsgBySelf("已读成功!");
         } catch (Exception e) {
             e.printStackTrace();

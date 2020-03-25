@@ -3,7 +3,9 @@ package cn.cmcc.diseasemonitor.controller;
 import cn.cmcc.diseasemonitor.entity.Notice;
 import cn.cmcc.diseasemonitor.service.NoticeService;
 import cn.cmcc.diseasemonitor.util.ResponseEntity;
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.List;
  * 4. 批量删除消息
  *
  */
+@Slf4j
 @RestController
 @CrossOrigin
 @RequestMapping("/notice")
@@ -47,12 +50,14 @@ public class NoticeController {
     @PostMapping("/read")
     @ApiOperation(value = "批量读取一些消息,只需要传入对象中包含id即可")
     public ResponseEntity readSomeNotice(@RequestHeader String token,@RequestBody List<Notice> notices){
+        log.info("read获得参数: {}", JSON.toJSONString(notices));
         return noticeService.readSomeNotice(token, notices);
     }
 
     @DeleteMapping("/delete")
     @ApiOperation(value = "批量删除一些消息,只需要传入对象中包含id即可")
     public ResponseEntity deleteSomeNotice(@RequestHeader String token, @RequestBody List<Notice> notices){
+        log.info("read获得参数: {}", JSON.toJSONString(notices));
         return noticeService.deleteSomeNotice(token, notices);
     }
 
