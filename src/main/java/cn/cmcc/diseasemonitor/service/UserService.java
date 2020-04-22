@@ -1,6 +1,7 @@
 package cn.cmcc.diseasemonitor.service;
 
 import cn.cmcc.diseasemonitor.entity.User;
+import cn.cmcc.diseasemonitor.util.constant.SmsType;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -12,8 +13,8 @@ public interface UserService {
     /**
      * 实验室人员登录, 返回登录是否成功,
      *
-     * @param username 用户名
-     * @param password 密码
+     * @param username   用户名
+     * @param password   密码
      * @param verifyCode 验证码
      * @return token 没有用户返回-3，密码错误返回-2，没有权限返回-1，登录成功返回userId,
      * 未知错误返回-100
@@ -81,6 +82,7 @@ public interface UserService {
 
     /**
      * 返回当前Ip登录是否需要验证码
+     *
      * @param request
      * @return
      */
@@ -89,16 +91,18 @@ public interface UserService {
     /**
      * 1. 先验证手机号对应的用户是否存在且是否唯一
      * 2. 生成短信验证码存到redis,格式 < 手机号, 短信验证码 >
+     *
      * @param ipAddr
      * @param verifyCode
      * @param phone
      * @return
      */
-    Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone, String token);
+    Map<String, String> generateSMScode(String ipAddr, String verifyCode, String phone, SmsType smsType, String token);
 
     /**
      * 为新手机生成验证码，传入新手机号码，在redis中生成新手机号和验证码的相关记录
      * 在绑定新手机的时候有用
+     *
      * @param ipAddr
      * @param phone
      * @return
@@ -107,6 +111,7 @@ public interface UserService {
 
     /**
      * 修改密码
+     *
      * @param phoneCode
      * @param newPwd
      * @return
@@ -115,6 +120,7 @@ public interface UserService {
 
     /**
      * 传手机号码和手机验证码进行登录
+     *
      * @param phone
      * @param phoneCode
      * @return

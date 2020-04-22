@@ -2,10 +2,8 @@ package cn.cmcc.diseasemonitor.service.impl;
 
 import cn.cmcc.diseasemonitor.controller.ControllerUtil;
 import cn.cmcc.diseasemonitor.repository.LaboratoryRepository;
-import cn.cmcc.diseasemonitor.util.Constant;
-import cn.cmcc.diseasemonitor.util.IpUtils;
-import cn.cmcc.diseasemonitor.util.MD5Util;
-import cn.cmcc.diseasemonitor.util.RedisUtil;
+import cn.cmcc.diseasemonitor.util.*;
+import cn.cmcc.diseasemonitor.util.constant.SmsType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.cmcc.diseasemonitor.entity.User;
@@ -85,7 +83,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Integer> updatePhone(String token, String phone, String phoneCode) {
         String phoneFromRedis = RedisUtil.getInstance().readDataFromRedis(phoneCode);
-        if (phoneFromRedis == null || phone == null || !phoneFromRedis.equals(phone)){
+        if (phoneFromRedis == null || phone == null || !phoneFromRedis.equals(phone)) {
             return Optional.empty();
         }
         return this.findUserIdByToken(token).map((v) -> {
@@ -110,25 +108,20 @@ public class UserServiceImpl implements UserService {
         System.out.println("generateSMScodeForNewPhone,操作者IP：" + ipAddr);
         Map<String, String> rs = new HashMap<>();
         //模拟生成手机验证码
-        String code;
-        if (null != RedisUtil.getInstance().readDataFromRedis(ipAddr + "phoneCode")){
+        if (null != RedisUtil.getInstance().readDataFromRedis(ipAddr + "phoneCode")) {
             //这里应该报错，你的操作太快了，1分钟冷却时间未到。
-            rs.put("INFO", "你的操作太快了，还没到一分钟");
-            code = RedisUtil.getInstance().readDataFromRedis(ipAddr + "phoneCode");
-        } else {
-            //生成并发送到手机号码
-            code = MD5Util.randomNumsStr(4);
-            //sentToPhone(code, phone);
+            rs.put("STATUS", "FAILURE");
+            rs.put("ERROR", "你的操作太快了，还没到一分钟");
+            return rs;
         }
-
-        // 此处应发送验证码至用户手机
+        //生成并发送到手机号码
+        String code = MD5Util.randomNumsStr(4);
+        SmsUtil.send(code, SmsType.CHANGE_PHONE.getName(), phone);
         // 验证码有效时间30分钟
         RedisUtil.getInstance().setDataToRedis(code, phone, 30);
         // flag 用于判断是否 发送验证码满 1 分钟了
         RedisUtil.getInstance().setDataToRedis(ipAddr + "phoneCode", code, 1);
-        rs.put("SUCCESS", phone);
-        rs.put("CODE",code);
-        rs.put("MSG", "你该用手机接收的验证码我直接给你:code");
+        rs.put("STATUS", "SUCCESS");
         return rs;
     }
 
@@ -136,6 +129,7 @@ public class UserServiceImpl implements UserService {
     public Map<String, String> generateSMScode(String ipAddr,
                                                String verifyCode,
                                                String phone,
+                                               SmsType smsType,
                                                String token) {
         Map<String, String> rs = new HashMap<>();
         if (token == null && verifyCode == null){
@@ -148,43 +142,51 @@ public class UserServiceImpl implements UserService {
         String tokenUserId = RedisUtil.getInstance().readDataFromRedis(token);
         // 先验证图片验证码, 防止恶意发送手机验证码
         String verify = RedisUtil.getInstance().readDataFromRedis(ipAddr + "verifycode");
-        if (null == tokenUserId){
-            if (verifyCode == null || !verifyCode.toLowerCase().equals(verify.toLowerCase())){
+        if (null == tokenUserId) {
+            if (verifyCode == null || !verifyCode.toLowerCase().equals(verify.toLowerCase())) {
+                rs.put("STATUS", "FAILURE");
                 rs.put("ERROR", "请输入正确的图片验证码");
                 return rs;
             }
             // 清除验证码
-            RedisUtil.getInstance().setDataToRedis(ipAddr + "verifycode","",30);
+            RedisUtil.getInstance().setDataToRedis(ipAddr + "verifycode", "", 30);
         }
         User user;
         try {
             user = resp.findByPhone(phone);
         } catch (Exception e) {
             e.printStackTrace();
-            rs.put("ERROR",e.getMessage());
+            rs.put("STATUS", "FAILURE");
+            rs.put("ERROR", e.getMessage());
             return rs;
         }
-        if (null == user){
+        if (null == user) {
+            rs.put("STATUS", "FAILURE");
             rs.put("ERROR", "该手机号尚未被绑定");
             return rs;
         }
 
         //模拟生成手机验证码
         String code = MD5Util.randomNumsStr(4);
-        // 此处应发送验证码至用户手机
-        // 验证码有效时间30分钟
-        RedisUtil.getInstance().setDataToRedis(code, phone, 30);
-        rs.put("SUCCESS", phone);
-        rs.put("CODE",code);
-        rs.put("MSG", "你该用手机接收的验证码我直接给你:code");
+
+        boolean result = SmsUtil.send(code, smsType.getName(), phone);
+        if (result) {
+            // 验证码有效时间30分钟
+            RedisUtil.getInstance().setDataToRedis(code, phone, 30);
+            rs.put("STATUS", "SUCCESS");
+        } else {
+            rs.put("STATUS", "FAILURE");
+            rs.put("ERROR", "发送失败，短信接口错误");
+        }
         return rs;
+
     }
 
     @Override
     public Map<String, String> changePwd(String phoneCode, String newPwd) {
         Map<String, String> rs = new HashMap<>();
         String phone = RedisUtil.getInstance().readDataFromRedis(phoneCode);
-        if (null == phone){
+        if (null == phone) {
             rs.put("ERROR", "验证码输入错误,没有找到验证码");
             return rs;
         }
@@ -192,7 +194,7 @@ public class UserServiceImpl implements UserService {
         User user = resp.findByPhone(phone);
         user.setPasswd(MD5Util.trueMd5(newPwd));
         resp.save(user);
-        rs.put("SUCCESS","找回密码成功");
+        rs.put("SUCCESS", "找回密码成功");
         return rs;
     }
 
@@ -200,7 +202,7 @@ public class UserServiceImpl implements UserService {
     public Integer loginWithPhone(String phone, String phoneCode, HttpServletRequest request) {
         String ip = IpUtils.getIpAddr(request);
         User user = resp.findByPhone(phone);
-        if (null == user){
+        if (null == user) {
             return Constant.NO_USER;
         }
         //校验手机验证码
@@ -222,16 +224,17 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 如果登录错误次数大于等于3次就要返回需要验证码
+     *
      * @param ip
      * @return
      */
-    private boolean isNeedVerifyCode(String ip){
+    private boolean isNeedVerifyCode(String ip) {
         String timeStr = RedisUtil.getInstance().readDataFromRedis(ip);
-        if (null == timeStr){
+        if (null == timeStr) {
             return false;
         }
         int time = Integer.parseInt(timeStr);
-        if (time >= 3){
+        if (time >= 3) {
             return true;
         } else {
             return false;
@@ -240,10 +243,11 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 增加一次登录出错记录在redis中
+     *
      * @param ip
      */
-    private void addWrongLoginTime(String ip){
-        if (null != RedisUtil.getInstance().readDataFromRedis(ip)){
+    private void addWrongLoginTime(String ip) {
+        if (null != RedisUtil.getInstance().readDataFromRedis(ip)) {
             Integer time = Integer.parseInt(RedisUtil.getInstance().readDataFromRedis(ip));
             Integer time2 = time + 1;
             RedisUtil.getInstance().setDataToRedis(ip, time2.toString(), 15);
@@ -255,29 +259,31 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 清除登录错误的次数记录
+     *
      * @param ip
      */
-    private  void clearWrongLoginTime(String ip){
-        RedisUtil.getInstance().setDataToRedis(ip,"0", 15);
+    private void clearWrongLoginTime(String ip) {
+        RedisUtil.getInstance().setDataToRedis(ip, "0", 15);
     }
 
     /**
      * 登录公共方法
+     *
      * @return
      */
-    private Integer loginCommon(String username, String password, String verifyCode, String ip, Boolean isPhone){
+    private Integer loginCommon(String username, String password, String verifyCode, String ip, Boolean isPhone) {
         // 检测是否需要验证码
         // time 这里是次数  不是时间
-        if (!isPhone){
+        if (!isPhone) {
             String timeStr = RedisUtil.getInstance().readDataFromRedis(ip);
-            if (null == timeStr){
+            if (null == timeStr) {
                 //NULL
             } else {
                 Integer time = Integer.parseInt(timeStr);
-                if (null != time && time >= 3){
+                if (null != time && time >= 3) {
                     // 需要验证码 生成的验证码存到 redis  key: ip + verifycode,   value: verifycode
-                    String verifyCode2 = RedisUtil.getInstance().readDataFromRedis(ip+"verifycode");
-                    if (null == verifyCode2 || verifyCode == null){
+                    String verifyCode2 = RedisUtil.getInstance().readDataFromRedis(ip + "verifycode");
+                    if (null == verifyCode2 || verifyCode == null) {
                         return Constant.VERIFYCODE_NONE;
                     }
                     if (!verifyCode.toLowerCase().equals(verifyCode2.toLowerCase())) {
@@ -287,7 +293,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         // 验证码正确 下一步删除验证码 继续登录
-        RedisUtil.getInstance().setDataToRedis(ip+"verifycode","",30);
+        RedisUtil.getInstance().setDataToRedis(ip + "verifycode", "", 30);
         //User user = resp.findByUserName(username);
 
         /**
@@ -301,7 +307,7 @@ public class UserServiceImpl implements UserService {
             addWrongLoginTime(ip);
             return Constant.NO_USER;
         }
-        password = isPhone? password.toUpperCase(): MD5Util.trueMd5(password).toUpperCase();
+        password = isPhone ? password.toUpperCase() : MD5Util.trueMd5(password).toUpperCase();
         String password2 = user.getPasswd().toUpperCase();
         if (!password.equals(password2)) {
             //密码不正确
