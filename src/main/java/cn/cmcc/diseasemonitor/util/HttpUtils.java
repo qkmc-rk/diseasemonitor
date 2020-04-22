@@ -38,26 +38,26 @@ public class HttpUtils {
      *
      * @param host
      * @param path
-     * @param method
      * @param headers
      * @param querys
      * @return
      * @throws Exception
      */
-    public static HttpResponse doGet(String host, String path, String method,
+    public static HttpResponse doGet(String host, String path,
                                      Map<String, String> headers,
-                                     Map<String, String> querys)
+                                     Map<String, String> querys,
+                                     boolean useGBK)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
-
-        HttpGet request = new HttpGet(buildUrl(host, path, querys));
-        if (headers != null){
+        HttpGet request = new HttpGet(buildUrl(host, path, querys, useGBK));
+        if (headers != null) {
             for (Map.Entry<String, String> e : headers.entrySet()) {
                 request.addHeader(e.getKey(), e.getValue());
             }
         }
         return httpClient.execute(request);
     }
+
 
     /**
      * post form
@@ -161,6 +161,7 @@ public class HttpUtils {
 
     /**
      * Put String
+     *
      * @param host
      * @param path
      * @param method
@@ -191,6 +192,7 @@ public class HttpUtils {
 
     /**
      * Put stream
+     *
      * @param host
      * @param path
      * @param method
@@ -244,7 +246,9 @@ public class HttpUtils {
         return httpClient.execute(request);
     }
 
-    private static String buildUrl(String host, String path, Map<String, String> querys) throws UnsupportedEncodingException {
+
+    private static String buildUrl(String host, String path, Map<String, String> querys, boolean useGBK) throws UnsupportedEncodingException {
+        String encoding = useGBK ? "gbk" : "utf-8";
         StringBuilder sbUrl = new StringBuilder();
         sbUrl.append(host);
         if (!StringUtils.isBlank(path)) {
@@ -263,7 +267,7 @@ public class HttpUtils {
                     sbQuery.append(query.getKey());
                     if (!StringUtils.isBlank(query.getValue())) {
                         sbQuery.append("=");
-                        sbQuery.append(URLEncoder.encode(query.getValue(), "utf-8"));
+                        sbQuery.append(URLEncoder.encode(query.getValue(), encoding));
                     }
                 }
             }
@@ -274,6 +278,11 @@ public class HttpUtils {
 
         return sbUrl.toString();
     }
+
+    private static String buildUrl(String host, String path, Map<String, String> querys) throws UnsupportedEncodingException {
+        return buildUrl(host, path, querys, false);
+    }
+
 
     private static HttpClient wrapClient(String host) {
         HttpClient httpClient = new DefaultHttpClient();
@@ -291,14 +300,16 @@ public class HttpUtils {
                 public X509Certificate[] getAcceptedIssuers() {
                     return null;
                 }
+
                 public void checkClientTrusted(X509Certificate[] xcs, String str) {
 
                 }
+
                 public void checkServerTrusted(X509Certificate[] xcs, String str) {
 
                 }
             };
-            ctx.init(null, new TrustManager[] { tm }, null);
+            ctx.init(null, new TrustManager[]{tm}, null);
             SSLSocketFactory ssf = new SSLSocketFactory(ctx);
             ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
             ClientConnectionManager ccm = httpClient.getConnectionManager();

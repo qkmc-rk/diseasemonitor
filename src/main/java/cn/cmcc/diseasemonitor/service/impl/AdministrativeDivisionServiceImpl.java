@@ -48,13 +48,13 @@ public class AdministrativeDivisionServiceImpl implements AdministrativeDivision
                 || level == Constant.LEVEL4
                 || level == Constant.LEVEL5;
 
-        if (valid && level == Constant.LEVEL1){
+        if (valid && level == Constant.LEVEL1) {
             return repository.findAllByLevel(Constant.LEVEL1);
-        }else if(valid && null != parentCode){
+        } else if (valid && null != parentCode) {
             return repository.findAllByLevelAndParentCode(level, parentCode);
-        }else if (valid && null == parentCode){
+        } else if (valid && null == parentCode) {
             return repository.findAllByLevel(level);
-        }else {
+        } else {
             return null;
         }
 
@@ -66,14 +66,13 @@ public class AdministrativeDivisionServiceImpl implements AdministrativeDivision
         try {
             String sn = SnCal.generateSn(address, ak, sk);
             log.info("sn: {}", sn);
-            String method = "GET";
             // 若使用hashmap, querys里的数据的次序会被打乱，用linkedhashmap比较好
             Map<String, String> querys = new LinkedHashMap<>();
             querys.put("address", address);// !!! 请求参数
             querys.put("output", "json");// !!! 请求参数
             querys.put("ak", ak);// !!! 请求参数
             querys.put("sn", sn);// !!! 请求参数
-            HttpResponse response = HttpUtils.doGet(url, null, method, null, querys);
+            HttpResponse response = HttpUtils.doGet(url, null, null, querys,false);
             //System.out.println(response.toString());如不输出json, 请打开这行代码，打印调试头部状态码。
             //状态码: 200 正常；400 URL无效；401 appCode错误； 403 次数用完； 500 API网管错误
             //获取response的body

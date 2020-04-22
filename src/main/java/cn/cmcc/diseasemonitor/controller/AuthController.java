@@ -2,6 +2,7 @@ package cn.cmcc.diseasemonitor.controller;
 
 import cn.cmcc.diseasemonitor.service.UserService;
 import cn.cmcc.diseasemonitor.util.*;
+import cn.cmcc.diseasemonitor.util.constant.SmsType;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class AuthController {
     public ResponseEntity login(@RequestParam String username
             , @RequestParam String password
             , @RequestParam(required = false) String verifyCode
-            , HttpServletRequest request){
+            , HttpServletRequest request) {
         String ip = IpUtils.getIpAddr(request);
         //校验密码
         Integer rs = userService.login(username, password, verifyCode, ip);
@@ -38,14 +39,14 @@ public class AuthController {
     @PostMapping("/phone/token")
     @ApiOperation(value = "手机号码登录接口", notes = "传入手机号和手机验证码")
     public ResponseEntity loginWithPhone(String phone, String phoneCode
-            , HttpServletRequest request){
+            , HttpServletRequest request) {
         Integer rs = userService.loginWithPhone(phone, phoneCode, request);
         return loginResult(rs);
     }
 
     @GetMapping("/verifycode/need")
     @ApiOperation(value = "是否需要验证码", notes = "登录是否需要验证码")
-    public ResponseEntity isNeedVerifyCode(HttpServletRequest request){
+    public ResponseEntity isNeedVerifyCode(HttpServletRequest request) {
         Boolean rs = userService.needVerifyCode(request);
         return ControllerUtil.getSuccessResultBySelf(rs);
     }
@@ -74,8 +75,9 @@ public class AuthController {
     public ResponseEntity generateSMScode(HttpServletRequest request,
                                           @RequestParam(required = false) String verifyCode,
                                           String phone,
-                                          @RequestHeader(required = false) String token){
-        return ControllerUtil.getDataResult(userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone, token));
+                                          SmsType smsType,
+                                          @RequestHeader(required = false) String token) {
+        return ControllerUtil.getDataResult(userService.generateSMScode(IpUtils.getIpAddr(request), verifyCode, phone, smsType, token));
     }
 
     /**
@@ -85,56 +87,57 @@ public class AuthController {
     @GetMapping("/newphone/phonecode")
     @ApiOperation(value = "新手机号码获取手机验证码")
     public ResponseEntity generateSMScodeForNewPhone(HttpServletRequest request,
-                                          String phone){
+                                                     String phone) {
         return ControllerUtil.getDataResult(userService.generateSMScodeForNewPhone(IpUtils.getIpAddr(request), phone));
     }
 
     @PostMapping("/password")
     @ApiOperation(value = "修改密码,需要手机号, 验证码, 新的密码")
     public ResponseEntity changePwd(@RequestParam String phoneCode
-            , @RequestParam String newPwd){
+            , @RequestParam String newPwd) {
         return ControllerUtil.getDataResult(userService.changePwd(phoneCode, newPwd));
     }
 
     @GetMapping("/token/expire")
-    public ResponseEntity tokenExpire(@RequestHeader String token){
+    public ResponseEntity tokenExpire(@RequestHeader String token) {
         String tokenUserId = RedisUtil.getInstance().readDataFromRedis(token);
         return ControllerUtil.getTrueOrFalseResult(!(null == tokenUserId));
     }
 
     @GetMapping("/phonecode/expire")
     @ApiOperation(value = "判断手机验证码是否在redis中")
-    public ResponseEntity phoneCodeExpire(String phoneCode){
+    public ResponseEntity phoneCodeExpire(String phoneCode) {
         String phone = RedisUtil.getInstance().readDataFromRedis(phoneCode);
         return ControllerUtil.getDataResult(phone);
     }
 
     /**
      * 登录结果处理
+     *
      * @param rs
      * @return
      */
-    private ResponseEntity loginResult(Integer rs){
-        if (null == rs){
+    private ResponseEntity loginResult(Integer rs) {
+        if (null == rs) {
             rs = Constant.UNKNOWN_ERROR;
         }
-        if (rs > 0){
+        if (rs > 0) {
             //登录成功
             String token = RedisUtil.getInstance().readDataFromRedis("token" + rs.intValue());
             return ControllerUtil.getSuccessResultBySelf(token);
-        }else if (rs == Constant.UNKNOWN_ERROR){
+        } else if (rs == Constant.UNKNOWN_ERROR) {
             return ControllerUtil.getFalseResultMsgBySelf("未知错误");
-        }else if (rs == Constant.NO_USER){
+        } else if (rs == Constant.NO_USER) {
             return ControllerUtil.getFalseResultMsgBySelf("没有找到该用户");
-        }else if (rs == Constant.ERROR_PWD){
+        } else if (rs == Constant.ERROR_PWD) {
             return ControllerUtil.getFalseResultMsgBySelf("密码错误");
-        }else if (rs == Constant.NO_PERMISSION){
+        } else if (rs == Constant.NO_PERMISSION) {
             return ControllerUtil.getFalseResultMsgBySelf("权限错误");
-        }else if (rs == Constant.VERIFYCODE_ERROR){
+        } else if (rs == Constant.VERIFYCODE_ERROR) {
             return ControllerUtil.getFalseResultMsgBySelf("验证码错误");
-        }else if (rs == Constant.VERIFYCODE_NONE){
+        } else if (rs == Constant.VERIFYCODE_NONE) {
             return ControllerUtil.getFalseResultMsgBySelf("未获取验证码，为空");
-        }else{
+        } else {
             return ControllerUtil.getFalseResultMsgBySelf("权限错误2");
         }
     }
